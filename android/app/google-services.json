@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "654294151538",
+    "project_id": "tutamfit",
+    "storage_bucket": "tutamfit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654294151538:android:3aaa1f5dc40b002a50adeb",
+        "android_client_info": {
+          "package_name": "com.example.tutam_fit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJwst_wQFs2lVLaXcQR6r5imsKqpfAm8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
