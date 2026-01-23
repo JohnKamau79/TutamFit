@@ -1,14 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/product_model.dart';
+import '../repositories/product_repository.dart';
+
+final productRepositoryProvider = Provider<ProductRepository>((ref) {
+  return ProductRepository();
+});
 
 final productProvider = StreamProvider<List<ProductModel>>((ref) {
-  return FirebaseFirestore.instance
-      .collection('products')
-      .snapshots()
-      .map(
-        (snapshot) => snapshot.docs
-            .map((doc) => ProductModel.fromJson(doc.data()))
-            .toList(),
-      );
+  final repo = ref.read(productRepositoryProvider);
+  return repo.getAllProducts();
 });

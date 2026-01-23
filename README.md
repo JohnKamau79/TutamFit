@@ -18,7 +18,9 @@
 # 20/1/2026
 - Design firebase schema
 - Design models and providers
-- 
+
+# 20/1/2026
+- Design repositories
 
 # COMMANDS
 

@@ -9,7 +9,11 @@ class CategoryRepository {
     return _firestore
         .collection(_collection)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => CategoryModel.fromJson(doc.data())).toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => CategoryModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 
   Future<void> addCategory(CategoryModel category) async {

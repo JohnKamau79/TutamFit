@@ -4,23 +4,19 @@ import 'package:json_annotation/json_annotation.dart';
 part 'cart_model.g.dart';
 
 @JsonSerializable()
-
-class CartItem{
+class CartItem {
   final String productId;
   final int quantity;
 
-  CartItem({
-    required this.productId,
-    required this.quantity,
-  });
+  CartItem({required this.productId, required this.quantity});
 
-  factory CartItem.fromJson(Map<String, dynamic> json) => _$CartItemFromJson(json);
+  factory CartItem.fromJson(Map<String, dynamic> json) =>
+      _$CartItemFromJson(json);
   Map<String, dynamic> toJson() => _$CartItemToJson(this);
 }
 
 @JsonSerializable()
-
-class CartModel{
+class CartModel {
   final String userId;
   final List<CartItem> items;
 
@@ -33,8 +29,9 @@ class CartModel{
     required this.updatedAt,
   });
 
-  factory CartModel.fromJson(Map<String, dynamic> json) => _$CartModelFromJson(json);
-  Map<String,dynamic> toJson() => _$CartModelToJson(this);
+  factory CartModel.fromJson(Map<String, dynamic> json) =>
+      _$CartModelFromJson(json);
+  Map<String, dynamic> toJson() => _$CartModelToJson(this);
 }
 
 Timestamp _timestampFromJson(Timestamp timestamp) => timestamp;

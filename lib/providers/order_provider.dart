@@ -1,18 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/order_model.dart';
+import '../repositories/order_repository.dart';
+
+final orderRepositoryProvider = Provider<OrderRepository>((ref) {
+  return OrderRepository();
+});
 
 final orderProvider = StreamProvider.family<List<OrderModel>, String>((
   ref,
   uid,
 ) {
-  return FirebaseFirestore.instance
-      .collection('orders')
-      .where('userId', isEqualTo: uid)
-      .snapshots()
-      .map(
-        (snapshot) => snapshot.docs
-            .map((doc) => OrderModel.fromJson(doc.data()))
-            .toList(),
-      );
+  final repo = ref.read(orderRepositoryProvider);
+  return repo.getOrderByUser(uid);
 });

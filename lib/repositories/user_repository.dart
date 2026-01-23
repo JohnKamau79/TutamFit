@@ -7,10 +7,10 @@ class UserRepository {
 
   Stream<UserModel> getUserById(String uid) {
     return _firestore
-      .collection(_collection)
-      .doc(uid)
-      .snapshots()
-      .map((doc) => UserModel.fromJson(doc.data()!));
+        .collection(_collection)
+        .doc(uid)
+        .snapshots()
+        .map((doc) => UserModel.fromJson(doc.data()!));
   }
 
   Future<void> addUser(UserModel user, String uid) async {

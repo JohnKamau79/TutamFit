@@ -8,9 +8,13 @@ class OrderRepository {
   Stream<List<OrderModel>> getOrderByUser(String uid) {
     return _firestore
         .collection(_collection)
-        .where('userId', isEqualTo: uid )
+        .where('userId', isEqualTo: uid)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => OrderModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 
   Future<void> addOrder(OrderModel order) async {

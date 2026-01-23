@@ -4,8 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'review_model.g.dart';
 
 @JsonSerializable()
-
-class ReviewModel{
+class ReviewModel {
   final String userId;
   final String productId;
   final int rating;
@@ -22,8 +21,9 @@ class ReviewModel{
     required this.createdAt,
   });
 
-  factory ReviewModel.fromJson(Map<String, dynamic> json) => _$ReviewModelFromJson(json);
-  Map<String,dynamic> toJson() => _$ReviewModelToJson(this);
+  factory ReviewModel.fromJson(Map<String, dynamic> json) =>
+      _$ReviewModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ReviewModelToJson(this);
 }
 
 Timestamp _timestampFromJson(Timestamp timestamp) => timestamp;

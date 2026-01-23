@@ -10,7 +10,11 @@ class ReviewRepository {
         .collection(_collection)
         .where('productId', isEqualTo: productId)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => ReviewModel.fromJson(doc.data())).toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => ReviewModel.fromJson(doc.data()))
+              .toList(),
+        );
   }
 
   Future<void> addReview(ReviewModel review) async {
