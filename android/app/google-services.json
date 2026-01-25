@@ -1,3 +1,4 @@
+
 {
   "project_info": {
     "project_number": "654294151538",
@@ -12,7 +13,20 @@
           "package_name": "com.example.tutam_fit"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "654294151538-abqolkqga8dv08jdbnbhtkuo4ok53j9t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tutam_fit",
+            "certificate_hash": "4b74a3d45f387215402d27a5e15e121885b7e5f7"
+          }
+        },
+        {
+          "client_id": "654294151538-cal8j9bhi0l2mu4rs7aaiib176qeravb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDJwst_wQFs2lVLaXcQR6r5imsKqpfAm8E"
@@ -20,7 +34,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654294151538-cal8j9bhi0l2mu4rs7aaiib176qeravb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "654294151538-ha49hnpqtbgmcuti0nman76ihv7fg75o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tutamFit"
+              }
+            }
+          ]
         }
       }
     }

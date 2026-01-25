@@ -19,8 +19,24 @@
 - Design firebase schema
 - Design models and providers
 
-# 20/1/2026
+# 21/1/2026
 - Design repositories
+
+# 23/1/2026
+- Design providers connected to repositories
+- Created firebase database ( europe-west1 (Belgium) - Closer thus low latency, meaning faster app response, lower billing costs )
+- Enforce rules for admin and user in firebase database
+- Set up android
+    # COMMAND
+    - cd android
+    - gradlew signingReport (Ensure Java 17 installed and path set in pc environmental variables )
+- Pasted SHA-1 and SHA-256 into Firebase -> project-settings -> android app for security
+- Downloaded **Google-service.json file after saving SHA, and replaced in android -> app**
+
+# 24/1/2026
+- Added google-sign-in **version 6.2.0**
+- Added email&password signup/signin + userRepository integration
+
 
 # COMMANDS
 
@@ -43,3 +59,12 @@
 - flutter pub run build_runner build --delete-conflicting-outputs
 
 
+
+# COMMANDS
+- flutter clean
+
+# Quiz
+- Stream<User?> authStateChanges() => _auth.authStateChanges();
+- auth_repository and provider
+- signInWithEmailAndPassword, Normal sign in, google sign in connection
+- final user = cred.user!;

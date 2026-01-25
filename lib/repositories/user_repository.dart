@@ -5,7 +5,7 @@ class UserRepository {
   final _firestore = FirebaseFirestore.instance;
   final _collection = 'user';
 
-  Stream<UserModel> getUserById(String uid) {
+  Stream<UserModel?> getUserById(String uid) {
     return _firestore
         .collection(_collection)
         .doc(uid)
@@ -14,7 +14,7 @@ class UserRepository {
   }
 
   Future<void> addUser(UserModel user, String uid) async {
-    await _firestore.collection(_collection).doc(uid).set(user.toJson());
+    await _firestore.collection(_collection).doc(uid).set(user.toJson(), SetOptions(merge: true));
   }
 
   Future<void> updateUser(String uid, Map<String, dynamic> data) async {
