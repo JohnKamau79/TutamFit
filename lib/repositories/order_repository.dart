@@ -24,4 +24,11 @@ class OrderRepository {
   Future<void> updateOrder(String docId, Map<String, dynamic> data) async {
     await _firestore.collection(_collection).doc(docId).update(data);
   }
+
+  Future<void> updateOrderStatus (String orderId, String status) async {
+    await _firestore.collection(_collection).doc(orderId).update({
+      'status': status,
+      'updatedAt': Timestamp.now(),
+  });
+  }
 }

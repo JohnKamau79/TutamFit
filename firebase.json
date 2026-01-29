@@ -1,1 +1,42 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"tutamfit","appId":"1:654294151538:android:3aaa1f5dc40b002a50adeb","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"tutamfit","configurations":{"android":"1:654294151538:android:3aaa1f5dc40b002a50adeb","ios":"1:654294151538:ios:89a560df2fc8ebee50adeb","macos":"1:654294151538:ios:89a560df2fc8ebee50adeb","web":"1:654294151538:web:07fac121dbdd7d6150adeb","windows":"1:654294151538:web:cfaadafd070e01d950adeb"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "tutamfit",
+          "appId": "1:654294151538:android:3aaa1f5dc40b002a50adeb",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "tutamfit",
+          "configurations": {
+            "android": "1:654294151538:android:3aaa1f5dc40b002a50adeb",
+            "ios": "1:654294151538:ios:89a560df2fc8ebee50adeb",
+            "macos": "1:654294151538:ios:89a560df2fc8ebee50adeb",
+            "web": "1:654294151538:web:07fac121dbdd7d6150adeb",
+            "windows": "1:654294151538:web:cfaadafd070e01d950adeb"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

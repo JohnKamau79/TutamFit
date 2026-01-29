@@ -1,66 +1,3 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:tutam_fit/models/order_model.dart';
-// import 'package:tutam_fit/repositories/cart_repository.dart';
-// import 'package:tutam_fit/repositories/order_repository.dart';
-
-// class CheckoutService{
-//   final CartRepository cartRepo;
-//   final OrderRepository orderRepo;
-
-//   CheckoutService({
-//     required this.cartRepo,
-//     required this.orderRepo,
-//   });
-
-//   Future<void> checkout(String userId) async {
-//     final cartSnap = await FirebaseFirestore.instance
-//         .collection('cart')
-//         .doc(userId)
-//         .get();
-
-//         if(!cartSnap.exists) {
-//           throw Exception('Cart is empty');
-//         }
-
-//         final total = await cartRepo.calculateTotal(userId);
-
-//         final cartItems = cartSnap['items'] as List;
-
-//         final List<OrderItem> orderItems = [];
-
-//         for(final item in cartItems) {
-//           final productSnap = await FirebaseFirestore.instance
-//               .collection('product')
-//               .doc(item['productId'])
-//               .get();
-          
-//         orderItems.add(
-//           OrderItem(
-//             productId: item['productId'],
-//             price: (productSnap['price'] as num).toDouble(),
-//             quantity: item['quantity'],
-//             ),
-//         );
-//         }
-
-//         final order = OrderModel(
-//           userId: userId, 
-//           products: orderItems, 
-//           totalPrice: total, 
-//           currency: 'KES', 
-//           status: 'pending', 
-//           paymentMethod: 'mpesa', 
-//           createdAt: Timestamp.now(), 
-//           updatedAt: Timestamp.now(),
-//         );
-
-//         await orderRepo.addOrder(order);
-
-//         await cartRepo.clearCart(userId);
-//   }
-// }
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tutam_fit/models/order_model.dart';
 
@@ -90,8 +27,21 @@ class CheckoutService {
 
         final productSnap = await transaction.get(productRef);
 
-        final price = (productSnap['price'] as num).toDouble();
-        final quantity = item['quantity'] as int;
+        if(!productSnap.exists) {
+          throw Exception('Product not found');
+        }
+
+        final int stock = productSnap['stock'];
+        final int quantity = item['quantity'] as int;
+        final double price = (productSnap['price'] as num).toDouble();
+
+        if(stock < quantity) {
+          throw Exception('Insufficient stock');
+        }
+
+        transaction.update(productRef, {
+          'stock': stock-quantity,
+        });
 
         total +=price * quantity;
 
@@ -106,12 +56,12 @@ class CheckoutService {
 
       final order = OrderModel(
         userId: userId, 
-        products: orderItems, 
-        totalPrice: total, 
-        currency: 'KES', 
-        status: 'pending', 
-        paymentMethod: 'mpesa', 
-        createdAt: Timestamp.now(), 
+        products: orderItems,
+        totalPrice: total,
+        currency: 'KES',
+        status: 'pending',
+        paymentMethod: 'mpesa',
+        createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       );
 

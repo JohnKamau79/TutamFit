@@ -28,6 +28,8 @@ class OrderModel {
   final String currency;
   final String status;
   final String paymentMethod;
+  final String? paymentStatus;
+  final String? paymentRef;
 
   @JsonKey(fromJson: _timestampFromJson, toJson: _timestampToJson)
   final Timestamp createdAt;
@@ -42,6 +44,8 @@ class OrderModel {
     required this.currency,
     required this.status,
     required this.paymentMethod,
+    this.paymentStatus,
+    this.paymentRef,
     required this.createdAt,
     required this.updatedAt,
   });
