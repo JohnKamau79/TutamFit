@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tutam_fit/screens/auth/login_screen.dart';
+import 'package:tutam_fit/screens/auth/signup_screen.dart';
 import 'package:tutam_fit/screens/home_screen.dart';
 import 'package:tutam_fit/screens/splash_screen.dart';
 
@@ -19,17 +21,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: '/home', builder: (_, _) => HomeScreen()),
-      // GoRoute(
-      //   path: '/login',
-      //   builder: (_, state) {
-      //     final redirect = state.queryParams['redirect'];
-      //     return LoginScreen( redirect: redirect);
-      //   },
-      // ),
-      // GoRoute(
-      //   path: '/signup',
-      //   builder: (_, _) => SignupScreen(),
-      // ),
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            key: state.pageKey,
+            transitionDuration: const Duration(milliseconds: 300),
+            child: const LoginScreen(),
+            transitionsBuilder: (context, animation, _, child) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,);
+            },
+            );
+        },
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (_, _) => SignupScreen(),
+      ),
       // GoRoute(
       //   path: '/product/:id',
       //   builder: (_, state) {

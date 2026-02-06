@@ -20,8 +20,8 @@ class HomeScreen extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () => context.push('/cart'),
-                child: Text('Go to Cart')),
+                onPressed: () => context.push('/login'),
+                child: Text('Go to Login')),
           ],
         ),
       ),
