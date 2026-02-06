@@ -55,7 +55,8 @@
     # COMMANDS
     - gradlew build -Xlint:deprecation (To check list of deprecated code syntax)
     
-
+# 06/2/2026
+- Auth screens set up and routing
    
 
 
