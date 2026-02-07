@@ -53,11 +53,11 @@ dependencies:
   collection: ^1.19.1
   logger: ^2.6.2
   http: ^1.6.0
-  shared_preferences: ^2.5.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   json_annotation: ^4.9.0
   google_sign_in: ^6.2.0
+  shared_preferences: ^2.5.4
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +72,20 @@ dev_dependencies:
   build_runner: ^2.10.5
   json_serializable: ^6.11.2
   mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/tutamfit.png"
+
+flutter_native_splash:
+  color: "#E53935"
+  android_12:
+    color: "#E53935"
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -85,9 +99,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/tutamfit.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

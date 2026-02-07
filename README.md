@@ -58,6 +58,30 @@
 # 06/2/2026
 - Auth screens set up and routing
    
+# 07/2/2026
+- Updated app name in android\app\src\main\AndroidManifest.xml [ android:label="TutamFit" ]
+- Set up app icon
+    # COMMANDS
+    - flutter pub add --dev flutter_launcher_icons [ Created flutter_launcher_icons file in pubspec.yaml ]
+    - flutter pub run flutter_launcher_icons:main
+    - flutter clean
+    - flutter pub get
+
+- Set up flutter native splash
+    # COMMANDS
+    - flutter pub add --dev flutter_native_splash [ Created flutter_native_splash file in pubspec.yaml ]
+    - dart run flutter_native_splash:create
+    - flutter clean
+    - flutter pub get
+
+    # ALL COMMANDS
+    - flutter pub get
+    - flutter pub run flutter_launcher_icons:main
+    - flutter pub run flutter_native_splash:create
+    - rmdir /s /q build
+    - flutter run
+
+
 
 
 # COMMANDS
