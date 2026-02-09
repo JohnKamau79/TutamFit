@@ -9,3 +9,18 @@ class AppColors {
   static const warningYellow = Color(0xFFFFEB3B);
   static const white = Colors.white;
 }
+
+
+// # PRIMARY COLORS
+// | Role                 | Color     | HEX     | Notes                            |
+// | -------------------- | --------- | ------- | -------------------------------- |
+// | Main Brand / Buttons | Fiery Red | #E53935 | Energy, action, motivates clicks |
+// | Background / Cards   | Dark Gray | #212121 | Strong, neutral, modern          |
+// | Header / Accents     | Deep Navy | #0D47A1 | Trustworthy, balances red        |
+
+// # ACCENT COLORS
+// | Role               | Color          | HEX     | Notes                    |
+// | ------------------ | -------------- | ------- | ------------------------ |
+// | Highlights / Icons | Vibrant Orange | #FB8C00 | Fun, active energy       |
+// | Success / Health   | Lime Green     | #C0CA33 | Health, vitality, subtle |
+// | Warnings / Alerts  | Yellow         | #FFEB3B | Eye-catching, sparingly  |

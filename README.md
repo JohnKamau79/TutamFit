@@ -73,7 +73,6 @@
     - dart run flutter_native_splash:create
     - flutter clean
     - flutter pub get
-
     # ALL COMMANDS
     - flutter pub get
     - flutter pub run flutter_launcher_icons:main
@@ -82,10 +81,18 @@
     - flutter run
 
 
+# 09/2/2026
+- Updated splash screen UI
+- Set up home screen layout
+- Set up tabs and **appShell** / main screen to navigate through the tabs
+- Set up category screen UI
+
+
+
+
 
 
 # COMMANDS
-
 - npm install -g firebase-tools
 - firebase --version
 - firebase login
@@ -116,47 +123,6 @@
 - final user = cred.user!;
 
 
-
-
-
-
-
-
-
-MPESA_CONSUMER_KEY= kLFRYs2fK6qgstpOs3LOCzPTr6H5SDpjJww5reNIRyVGJSox
-MPESA_CONSUMER_SECRET= perCKS9gwQsyc7wohxhGCfWLpXsafAFfCcGQSRmR0It65jfDy1bGA8hqrnnhXkKc
-MPESA_SHORTCODE= 174379
-MPESA_PASSKEY= bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
-MPESA_CALLBACK_URL=   https://d4cc2257cae5.ngrok-free.app/mpesa/callback
-MPESA_ENV=sandbox
-
-
-
-
-firebase functions:params:set MPESA_CONSUMER_KEY="kLFRYs2fK6qgstpOs3LOCzPTr6H5SDpjJww5reNIRyVGJSox"
-firebase functions:params:set MPESA_CONSUMER_SECRET="perCKS9gwQsyc7wohxhGCfWLpXsafAFfCcGQSRmR0It65jfDy1bGA8hqrnnhXkKc"
-firebase functions:params:set MPESA_SHORTCODE="174379"
-firebase functions:params:set MPESA_PASSKEY="bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-firebase functions:params:set MPESA_CALLBACK_URL="https://d4cc2257cae5.ngrok-free.app/mpesa/callback"
-
-
-
-
-
-
-
-
-
-# PRIMARY COLORS
-| Role                 | Color     | HEX     | Notes                            |
-| -------------------- | --------- | ------- | -------------------------------- |
-| Main Brand / Buttons | Fiery Red | #E53935 | Energy, action, motivates clicks |
-| Background / Cards   | Dark Gray | #212121 | Strong, neutral, modern          |
-| Header / Accents     | Deep Navy | #0D47A1 | Trustworthy, balances red        |
-
-# ACCENT COLORS
-| Role               | Color          | HEX     | Notes                    |
-| ------------------ | -------------- | ------- | ------------------------ |
-| Highlights / Icons | Vibrant Orange | #FB8C00 | Fun, active energy       |
-| Success / Health   | Lime Green     | #C0CA33 | Health, vitality, subtle |
-| Warnings / Alerts  | Yellow         | #FFEB3B | Eye-catching, sparingly  |
+# Optimisation
+- Const to avoid rebuild
+- Indexed stack for tabs to avoid rebuild and allow caching

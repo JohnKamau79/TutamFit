@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/screens/auth/login_screen.dart';
 import 'package:tutam_fit/screens/auth/signup_screen.dart';
-import 'package:tutam_fit/screens/home_screen.dart';
+import 'package:tutam_fit/screens/main_screen.dart';
 import 'package:tutam_fit/screens/splash_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -20,7 +20,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           },
         ),
       ),
-      GoRoute(path: '/home', builder: (_, _) => HomeScreen()),
+      GoRoute(path: '/main', builder: (_, _) => MainScreen()),
       GoRoute(
         path: '/login',
         pageBuilder: (context, state) {
