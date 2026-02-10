@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
 
 class CartScreen extends StatelessWidget {
@@ -22,7 +23,9 @@ class CartScreen extends StatelessWidget {
             Row(
               children: [
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/cart-edit');
+                  },
                   label: Text(
                     'Edit',
                     style: TextStyle(
@@ -149,7 +152,9 @@ class _CartSummary extends StatelessWidget {
                 backgroundColor: AppColors.primaryRed,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              onPressed: () {},
+              onPressed: () {
+                context.push('/checkout');
+              },
               child: const Text(
                 'Checkout',
                 style: TextStyle(

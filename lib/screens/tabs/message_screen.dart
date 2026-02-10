@@ -30,7 +30,7 @@ class MessageScreen extends StatelessWidget {
             icon: Icons.receipt_long,
             title: 'Order Updates',
             subtitle: 'Track orders and delivery status',
-            onTap: () => context.push('/notifications'),
+            onTap: () => context.push('/order-updates'),
           ),
           _MessageTile(
             icon: Icons.campaign,
@@ -65,35 +65,40 @@ class _MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppColors.darkGray)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 32, color: AppColors.vibrantOrange),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+    return Material(
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: AppColors.darkGray)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 32, color: AppColors.vibrantOrange),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: AppColors.limeGreen)),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(color: AppColors.limeGreen),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right),
-          ],
+              const Icon(Icons.chevron_right),
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -24,23 +25,89 @@ class AccountScreen extends StatelessWidget {
           _ProfileHeader(),
           const SizedBox(height: 8),
           _sectionTitle('My Activity'),
-          _accountItem(Icons.favorite, 'Wishlist'),
-          _accountItem(Icons.shopping_bag, 'My Orders'),
-          _accountItem(Icons.star, 'Ratings'),
-          _accountItem(Icons.rate_review, 'Reviews'),
-          _accountItem(Icons.history, 'Recently Viewed'),
+          _accountItem(
+            icon: Icons.favorite,
+            title: 'Wishlist',
+            onTap: () {
+              context.push('/wishlist');
+            },
+          ),
+          _accountItem(
+            icon: Icons.shopping_bag,
+            title: 'My Orders',
+            onTap: () {
+              context.push('/orders');
+            },
+          ),
+          _accountItem(
+            icon: Icons.star,
+            title: 'Ratings',
+            onTap: () {
+              context.push('/ratings');
+            },
+          ),
+          _accountItem(
+            icon: Icons.rate_review,
+            title: 'Reviews',
+            onTap: () {
+              context.push('/reviews');
+            },
+          ),
+          _accountItem(
+            icon: Icons.history,
+            title: 'Recently Viewed',
+            onTap: () {
+              context.push('/recently-viewed');
+            },
+          ),
 
           _sectionTitle('Payments & Addresses'),
-          _accountItem(Icons.account_balance_wallet, 'Balance'),
-          _accountItem(Icons.location_on, 'Address Book'),
+          _accountItem(
+            icon: Icons.account_balance_wallet,
+            title: 'Balance',
+            onTap: () {
+              context.push('/balance');
+            },
+          ),
+          _accountItem(
+            icon: Icons.location_on,
+            title: 'Address Book',
+            onTap: () {
+              context.push('/address-book');
+            },
+          ),
 
           _sectionTitle('Preferences'),
-          _accountItem(Icons.notifications, 'Notification Preferences'),
-          _accountItem(Icons.settings, 'Settings'),
+          _accountItem(
+            icon: Icons.notifications,
+            title: 'Notification Preferences',
+            onTap: () {
+              context.push('/notification-preferences');
+            },
+          ),
+          _accountItem(
+            icon: Icons.settings,
+            title: 'Settings',
+            onTap: () {
+              context.push('/settings');
+            },
+          ),
 
           _sectionTitle('Support'),
-          _accountItem(Icons.help_outline, 'FAQ'),
-          _accountItem(Icons.support_agent, 'Customer Service'),
+          _accountItem(
+            icon: Icons.help_outline,
+            title: 'FAQ',
+            onTap: () {
+              context.push('/faq');
+            },
+          ),
+          _accountItem(
+            icon: Icons.support_agent,
+            title: 'Customer Service',
+            onTap: () {
+              context.push('/customer-service');
+            },
+          ),
         ],
       ),
     );
@@ -60,45 +127,59 @@ Widget _sectionTitle(String title) {
   );
 }
 
-Widget _accountItem(IconData icon, String title) {
+Widget _accountItem({
+  required IconData icon,
+  required String title,
+  required VoidCallback onTap,
+}) {
   return ListTile(
     leading: Icon(icon, color: AppColors.primaryRed),
     title: Text(title),
     trailing: const Icon(Icons.chevron_right),
-    onTap: () {},
+    onTap: onTap,
   );
 }
 
 class _ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.darkGray,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 30,
-            backgroundColor: AppColors.limeGreen,
-            child: Icon(Icons.person, size: 30, color: AppColors.darkGray),
-          ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                'Guest User',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+    return Material(
+      child: InkWell(
+        onTap: () {
+          context.push('/profile');
+        },
+        child: Container(
+          color: AppColors.darkGray,
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                radius: 30,
+                backgroundColor: AppColors.limeGreen,
+                child: Icon(Icons.person, size: 30, color: AppColors.darkGray),
               ),
-              SizedBox(height: 4),
-              Text('Tap to login', style: TextStyle(color: AppColors.white)),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Guest User',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Tap to login',
+                    style: TextStyle(color: AppColors.white),
+                  ),
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

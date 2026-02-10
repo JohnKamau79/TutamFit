@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/widgets/searchbar_widget.dart';
 
@@ -67,7 +68,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   List<String> getTypes() {
-    if(isFeatured) {
+    if (isFeatured) {
       final allTypes = categories.values.expand((list) => list).toList();
       allTypes.shuffle(Random());
       return allTypes;
@@ -104,28 +105,28 @@ class _CategoryScreenState extends State<CategoryScreen> {
               itemCount: categoryKeys.length,
               itemBuilder: (context, index) {
                 final category = categoryKeys[index];
-                final isSelected = (!isFeatured && category == selectedCategory) || (isFeatured && category == 'Featured');
+                final isSelected =
+                    (!isFeatured && category == selectedCategory) ||
+                    (isFeatured && category == 'Featured');
 
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if(category == 'Featured') {
-                        isFeatured = true;
-                        selectedCategory = null;
-                      }else {
-                        isFeatured = false;
-                        selectedCategory = category;
-                      }
-                    });
-                  },
-                  child: Container(
-                    color: isSelected
-                        ? AppColors.deepNavy
-                        : AppColors.primaryRed,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 12,
-                    ),
+                return Container(
+                  color: isSelected ? AppColors.deepNavy : AppColors.primaryRed,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 12,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (category == 'Featured') {
+                          isFeatured = true;
+                          selectedCategory = null;
+                        } else {
+                          isFeatured = false;
+                          selectedCategory = category;
+                        }
+                      });
+                    },
                     child: Text(
                       category,
                       style: const TextStyle(
@@ -141,7 +142,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
           Expanded(
             child: GridView.builder(
-              padding: isFeatured ? const EdgeInsets.all(12) : const EdgeInsets.all(40),
+              padding: isFeatured
+                  ? const EdgeInsets.all(12)
+                  : const EdgeInsets.all(40),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: isFeatured ? 2 : 1,
                 mainAxisSpacing: 16,
@@ -152,16 +155,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
               itemBuilder: (context, index) {
                 final type = types[index];
 
-                return GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
-                        BoxShadow(color: AppColors.darkGray, blurRadius: 6),
-                      ],
-                    ),
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: const [
+                      BoxShadow(color: AppColors.darkGray, blurRadius: 6),
+                    ],
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push('/product-filter');
+                    },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -176,7 +181,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           ),
                         ),
                         Padding(
-                          padding: isFeatured ? EdgeInsets.all(8) : EdgeInsets.all(16),
+                          padding: isFeatured
+                              ? EdgeInsets.all(8)
+                              : EdgeInsets.all(16),
                           child: Text(
                             type,
                             style: TextStyle(

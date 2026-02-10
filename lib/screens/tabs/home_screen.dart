@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/widgets/searchbar_widget.dart';
@@ -11,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,37 +47,42 @@ class _HomeScreenState extends State<HomeScreen> {
                 BoxShadow(color: AppColors.darkGray, blurRadius: 6),
               ],
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.darkGray,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(12),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/product');
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.darkGray,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Product Name',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
-                  child: Text(
-                    'KES 5000',
-                    style: TextStyle(
-                      color: AppColors.darkGray,
-                      fontWeight: FontWeight.bold,
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      'Product Name',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                ),
-              ],
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                    child: Text(
+                      'KES 5000',
+                      style: TextStyle(
+                        color: AppColors.darkGray,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
