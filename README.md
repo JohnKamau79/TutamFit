@@ -83,11 +83,13 @@
 
 # 09/2/2026
 - Updated splash screen UI
-- Set up home screen layout
+- Set up home screen layout with **GridView builder + GestureDetector**
 - Set up tabs and **appShell** / main screen to navigate through the tabs
-- Set up category screen UI
+- Set up category screen UI **ListView builder + GestureDetector** and **GridView builder GestureDetector**
 
-
+# 10/2/2026
+- Set up message screen with **InkWell** layout
+- Set up account screen with **ListStyle** layout
 
 
 
