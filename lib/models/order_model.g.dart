@@ -27,6 +27,8 @@ OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => OrderModel(
   currency: json['currency'] as String,
   status: json['status'] as String,
   paymentMethod: json['paymentMethod'] as String,
+  paymentStatus: json['paymentStatus'] as String?,
+  paymentRef: json['paymentRef'] as String?,
   createdAt: _timestampFromJson(json['createdAt'] as Timestamp),
   updatedAt: _timestampFromJson(json['updatedAt'] as Timestamp),
 );
@@ -39,6 +41,8 @@ Map<String, dynamic> _$OrderModelToJson(OrderModel instance) =>
       'currency': instance.currency,
       'status': instance.status,
       'paymentMethod': instance.paymentMethod,
+      'paymentStatus': instance.paymentStatus,
+      'paymentRef': instance.paymentRef,
       'createdAt': _timestampToJson(instance.createdAt),
       'updatedAt': _timestampToJson(instance.updatedAt),
     };

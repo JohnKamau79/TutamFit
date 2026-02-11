@@ -52,12 +52,13 @@ dependencies:
   equatable: ^2.0.8
   collection: ^1.19.1
   logger: ^2.6.2
-  http: ^1.6.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   json_annotation: ^4.9.0
   google_sign_in: ^6.2.0
   shared_preferences: ^2.5.4
+  image_picker: ^1.2.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

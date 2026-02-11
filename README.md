@@ -21,6 +21,9 @@
 
 - Design firebase schema
 - Design models and providers
+  # COMMANDS
+  - flutter pub run build_runner build
+  - flutter pub run build_runner build --delete-conflicting-outputs ( scan all files with **@JsonSerializable()**, builds **.g.dart files**, enable use with **fromJson** & **toJson** )
 
 # 21/1/2026
 
@@ -104,6 +107,14 @@
 - Set up message screen with **InkWell** layout
 - Set up account screen with **ListStyle** layout
 - Created files and routes for all remaining pages
+- Set up free **Cloudinary** account and created new **unasigned** **upload preset** ( Won't be needing Cloudinary API keys )
+- Added **image_picker, http and cloud_firestore** for **Cloudinary**
+
+# 11/2/2026
+- Updated categoryModel with categoryType as list
+- Created and set up category form
+- Added cloudinary upload and url return logic to category form using **setState**
+- Added category & type upload presets for images (**NOW WORKING**)
 
 # COMMANDS
 
@@ -121,11 +132,6 @@
 # part 'user_model.g.dart';
 
 - Uses **json_annotation** package
-
-# COMMANDS
-
-- flutter pub run build_runner build
-- flutter pub run build_runner build --delete-conflicting-outputs
 
 # COMMANDS
 
