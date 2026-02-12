@@ -20,9 +20,19 @@ class UploadService {
     return null;
   }
 
-  // Upload Product Image
+  Future<List<File>> pickMultiImages() async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+    if (pickedFiles.isNotEmpty) {
+      return pickedFiles.map((x) => File(x.path)).toList();
+    }
+    return [];
+  }
+
+  // Upload Image
   Future<String?> _uploadImage(File imageFile, String preset) async {
-    var request = http.MultipartRequest(
+    try {
+      var request = http.MultipartRequest(
       'POST',
       Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload'),
     );
@@ -36,11 +46,28 @@ class UploadService {
     var data = json.decode(resData);
 
     return data['secure_url'];
+    } catch (e) {
+      print('Upload failed: $e');
+      return null;
+    }
   }
 
-  Future<String?> uploadTypeImage(File imageFile) => _uploadImage(imageFile, typeUploadPreset);
-  Future<String?> uploadCategoryImage(File imageFile) => _uploadImage(imageFile, categoryUploadPreset);
-  Future<String?> uploadProductImage(File imageFile) => _uploadImage(imageFile, productUploadPreset);
+  Future<String?> uploadTypeImage(File imageFile) =>
+      _uploadImage(imageFile, typeUploadPreset);
+  Future<String?> uploadCategoryImage(File imageFile) =>
+      _uploadImage(imageFile, categoryUploadPreset);
+  // Future<String?> uploadProductImage(File imageFile) =>
+  //     _uploadImage(imageFile, productUploadPreset);
+
+  Future<List<String>> uploadMultiProductImages(List<File> imageFiles) async {
+    List<String> urls = [];
+    for( var imageFile in imageFiles) {
+      final url = await _uploadImage(imageFile, productUploadPreset);
+      if(url != null) urls.add(url);
+    }
+
+    return urls;
+  }
 
   Future<void> saveProduct({
     required String name,
@@ -54,6 +81,7 @@ class UploadService {
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
+
   Future<void> saveCategory({
     required String name,
     required String imageUrl,

@@ -18,6 +18,7 @@ import 'package:tutam_fit/screens/auth/signup_screen.dart';
 import 'package:tutam_fit/screens/cart/checkout_screen.dart';
 import 'package:tutam_fit/screens/cart/edit_cart_screen.dart';
 import 'package:tutam_fit/screens/forms/category_form.dart';
+import 'package:tutam_fit/screens/forms/product_form.dart';
 import 'package:tutam_fit/screens/main_screen.dart';
 import 'package:tutam_fit/screens/messaging/order_updates_screen.dart';
 import 'package:tutam_fit/screens/messaging/support_chat_screen.dart';
@@ -55,8 +56,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(path: '/signup', builder: (_, _) => SignupScreen()),
-      GoRoute(path: '/category-form', builder: (context, state) => CategoryForm(),),
+      GoRoute(
+        path: '/category-form',
+        builder: (context, state) => CategoryForm(),
+      ),
       GoRoute(path: '/product', builder: (_, _) => ProductDetailsScreen()),
+      GoRoute(path: '/product-form', builder: (_, _) => ProductForm()),
       GoRoute(
         path: '/product-filter',
         builder: (_, _) => ProductFilterScreen(),

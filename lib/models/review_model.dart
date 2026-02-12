@@ -5,6 +5,7 @@ part 'review_model.g.dart';
 
 @JsonSerializable()
 class ReviewModel {
+  final String id;
   final String userId;
   final String productId;
   final int rating;
@@ -14,6 +15,7 @@ class ReviewModel {
   final Timestamp createdAt;
 
   ReviewModel({
+    required this.id,
     required this.userId,
     required this.productId,
     required this.rating,

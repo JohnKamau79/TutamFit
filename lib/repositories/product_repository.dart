@@ -2,29 +2,56 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 
 class ProductRepository {
-  final _firestore = FirebaseFirestore.instance;
-  final _collection = 'product';
+  final CollectionReference _productCollection = FirebaseFirestore.instance.collection('products');
+  // final _firestore = FirebaseFirestore.instance;
+  // final _collection = 'product';
 
+// Get all products
   Stream<List<ProductModel>> getAllProducts() {
-    return _firestore
-        .collection(_collection)
+    return _productCollection
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-              .map((doc) => ProductModel.fromJson(doc.data()))
+              .map((doc) {
+                final data = doc.data() as Map<String, dynamic>;
+                data['id'] = doc.id;
+                return ProductModel.fromJson(data);
+              })
               .toList(),
         );
   }
 
+// Get products by category or type
+  Stream<List<ProductModel>> filterProducts({String? categoryId, String? typeName,}) {
+    Query query = _productCollection;
+    if(categoryId != null) {
+      query = query.where('categoryId', isEqualTo: categoryId);
+    }
+    if(typeName != null) {
+      query = query.where('typeName', isEqualTo: typeName);
+    }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        data['id'] = doc.id;
+        return ProductModel.fromJson(data);
+      }).toList();
+    });
+  }
+
+// Add new product
   Future<void> addProduct(ProductModel product) async {
-    await _firestore.collection(_collection).add(product.toJson());
+    await _productCollection.add(product.toJson());
   }
 
+// Update existing product
   Future<void> updateProduct(String docId, Map<String, dynamic> data) async {
-    await _firestore.collection(_collection).doc(docId).update(data);
+    await _productCollection.doc(docId).update(data);
   }
 
+// Delete existing product
   Future<void> deleteProduct(String docId) async {
-    await _firestore.collection(_collection).doc(docId).delete();
+    await _productCollection.doc(docId).delete();
   }
 }

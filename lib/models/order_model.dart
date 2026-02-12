@@ -22,6 +22,7 @@ class OrderItem {
 
 @JsonSerializable()
 class OrderModel {
+  final String id;
   final String userId;
   final List<OrderItem> products;
   final double totalPrice;
@@ -38,6 +39,7 @@ class OrderModel {
   final Timestamp updatedAt;
 
   OrderModel({
+    required this.id,
     required this.userId,
     required this.products,
     required this.totalPrice,

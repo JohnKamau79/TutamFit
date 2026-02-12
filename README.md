@@ -116,6 +116,10 @@
 - Added cloudinary upload and url return logic to category form using **setState**
 - Added category & type upload presets for images (**NOW WORKING**)
 
+# 12/2/2026
+- Updated product repository, provider, as well as changes home_screen to ConsumerStatefulWidget for dynamic data UI
+- Updated all models with id field
+
 # COMMANDS
 
 - npm install -g firebase-tools
