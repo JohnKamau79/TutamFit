@@ -7,9 +7,9 @@ part of 'category_model.dart';
 // **************************************************************************
 
 CategoryType _$CategoryTypeFromJson(Map<String, dynamic> json) => CategoryType(
-  id: json['id'] as String,
+  id: json['id'] as String?,
   name: json['name'] as String,
-  imageUrl: json['imageUrl'] as String,
+  imageUrl: json['imageUrl'] as String?,
 );
 
 Map<String, dynamic> _$CategoryTypeToJson(CategoryType instance) =>
@@ -21,10 +21,12 @@ Map<String, dynamic> _$CategoryTypeToJson(CategoryType instance) =>
 
 CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
     CategoryModel(
-      id: json['id'] as String,
+      id: json['id'] as String?,
       name: json['name'] as String,
-      imageUrl: json['imageUrl'] as String,
-      types: CategoryModel._typesFromJson(json['types'] as List?),
+      imageUrl: json['imageUrl'] as String?,
+      types: (json['types'] as List<dynamic>?)
+          ?.map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
@@ -32,5 +34,5 @@ Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'imageUrl': instance.imageUrl,
-      'types': instance.types,
+      'types': instance.types?.map((e) => e.toJson()).toList(),
     };

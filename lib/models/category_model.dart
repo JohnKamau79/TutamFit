@@ -4,27 +4,27 @@ part 'category_model.g.dart';
 
 @JsonSerializable()
 class CategoryType {
-  final String id;
+  final String? id;
   final String name;
-  final String imageUrl;
+  final String? imageUrl;
 
-  CategoryType({required this.id, required this.name, required this.imageUrl});
+  CategoryType({this.id ,required this.name, required this.imageUrl});
 
   factory CategoryType.fromJson(Map<String, dynamic> json) =>
       _$CategoryTypeFromJson(json);
   Map<String, dynamic> toJson() => _$CategoryTypeToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class CategoryModel {
-  final String id;
+  final String? id;
   final String name;
-  final String imageUrl;
-  @JsonKey(fromJson: _typesFromJson)
-  final List<CategoryType> types;
+  final String? imageUrl;
+  // @JsonKey(fromJson: _typesFromJson)
+  final List<CategoryType>? types;
 
   CategoryModel({
-    required this.id,
+    this.id,
     required this.name,
     required this.imageUrl,
     required this.types,
@@ -34,10 +34,10 @@ class CategoryModel {
       _$CategoryModelFromJson(json);
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 
-  static List<CategoryType> _typesFromJson(List<dynamic>? json) {
-    if (json == null) return [];
-    return json
-        .map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
+  // static List<CategoryType> _typesFromJson(List<dynamic>? json) {
+  //   if (json == null) return [];
+  //   return json
+  //       .map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
+  //       .toList();
+  // }
 }

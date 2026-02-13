@@ -71,7 +71,7 @@ class _ProductFormState extends ConsumerState<ProductForm> {
             price: double.parse(priceController.text.trim()),
             categoryId: selectedCategoryId!,
             typeName: selectedType!.id,
-            images: uploadedImageUrls,
+            imageUrls: uploadedImageUrls,
             stock: int.parse(stockController.text.trim()),
             rating: 0,
             createdAt: Timestamp.now(),
@@ -88,7 +88,7 @@ class _ProductFormState extends ConsumerState<ProductForm> {
 
   @override
   Widget build(BuildContext context) {
-    final categoriesAsync = ref.watch(categoryProvider);
+    final categoriesAsync = ref.watch(categoryFetchFutureProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text('Add Product Form')),
@@ -129,6 +129,7 @@ class _ProductFormState extends ConsumerState<ProductForm> {
               categoriesAsync.when(
                 data: (categories) => DropdownButtonFormField<String>(
                   initialValue: selectedCategoryId,
+                  decoration: const InputDecoration(labelText: 'Category'),
                   items: categories
                       .map(
                         (cat) => DropdownMenuItem(
@@ -147,7 +148,7 @@ class _ProductFormState extends ConsumerState<ProductForm> {
                 ),
                 loading: () => const LinearProgressIndicator(),
                 error: (error, stackTrace) =>
-                    const Text('Error loading categories'),
+                    Text('Error loading categories: $error'),
               ),
 
               const SizedBox(height: 16),
@@ -165,7 +166,7 @@ class _ProductFormState extends ConsumerState<ProductForm> {
                       initialValue: selectedType,
                       decoration: const InputDecoration(labelText: 'Type'),
                       items: types
-                          .map(
+                          ?.map(
                             (type) => DropdownMenuItem<CategoryType>(
                               value: type,
                               child: Text(type.name),
@@ -239,12 +240,6 @@ class _ProductFormState extends ConsumerState<ProductForm> {
                     ),
                   ),
                 ),
-              ElevatedButton(
-                onPressed: isSubmitting ? null : submitForm,
-                child: isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('Save Product'),
-              ),
               ElevatedButton(
                 onPressed: isSubmitting ? null : submitForm,
                 child: isSubmitting

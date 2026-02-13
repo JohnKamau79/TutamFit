@@ -5,13 +5,13 @@ part 'product_model.g.dart';
 
 @JsonSerializable()
 class ProductModel {
-  final String id;
+  final String? id;
   final String name;
   final String description;
   final double price;
   final String categoryId;
-  final String typeName;
-  final List<String> images;
+  final String? typeName;
+  final List<String> imageUrls;
   final int stock;
   final double rating;
 
@@ -22,13 +22,13 @@ class ProductModel {
   final Timestamp updatedAt;
 
   ProductModel({
-    required this.id,
+    this.id,
     required this.name,
     required this.description,
     required this.price,
     required this.categoryId,
-    required this.typeName,
-    required this.images,
+    this.typeName,
+    required this.imageUrls,
     required this.stock,
     required this.rating,
     required this.createdAt,

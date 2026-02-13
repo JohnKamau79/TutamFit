@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/product_model.dart';
 import '../repositories/product_repository.dart';
 
@@ -7,27 +8,63 @@ final productRepositoryProvider = Provider<ProductRepository>((ref) {
   return ProductRepository();
 });
 
-// Watch for product changes
-final allProductsStreamProvider = StreamProvider<List<ProductModel>>((ref) {
-  final repo = ref.watch(productRepositoryProvider);
-  return repo.getAllProducts();
+
+// All selected category.
+final selectedCategoryProvider = StateProvider<String>((ref) {
+  return 'all';
 });
 
-final filteredProductsStreamProvider =
-    StreamProvider.family<List<ProductModel>, Map<String, String?>>((
-      ref,
-      filter,
-    ) {
-      final repo = ref.watch(productRepositoryProvider);
-      final categoryId = filter['categoryId'];
-      final typeName = filter['typeName'];
+final searchQueryProvider = StateProvider<String>((ref) => '');
 
-      return repo.filterProducts(categoryId: categoryId, typeName: typeName);
-    });
+// Filter category
+final productsStreamProvider = StreamProvider.autoDispose<List<ProductModel>>((ref) {
+  final repo = ref.read(productRepositoryProvider);
+  final selectedCategory = ref.watch(selectedCategoryProvider);
+  final searchQuery = ref.watch(searchQueryProvider).toLowerCase();
 
-// StreamProvider<List<ProductModel>> productsByFilterProvider({ String? categoryId, String? typeName }) {
-//   return StreamProvider<List<ProductModel>>((ref) {
-//     final repo = ref.watch(productRepositoryProvider);
-//     return repo.filterProducts(categoryId: categoryId, typeName: typeName);
-//   });
-// }
+
+  return repo.getFilteredProducts(categoryId: selectedCategory).map((products) {
+    if(searchQuery.isEmpty) return products;
+    return products.where((p) => p.name.toLowerCase().contains(searchQuery)).toList();
+  });
+});
+
+// // Watch for product changes
+// final allProductsStreamProvider = StreamProvider<List<ProductModel>>((ref) {
+//   final repo = ref.read(productRepositoryProvider);
+//   return repo.getAllProducts();
+// });
+
+// final productsFutureProvider = FutureProvider<List<ProductModel>>((ref) {
+//   final repo = ref.read(productRepositoryProvider);
+//   return repo.fetchProductsOnce();
+// });
+
+
+// final productsByCategoryFutureProvider = StreamProvider.family<List<ProductModel>, Map<String, String?>>((ref, filter) {
+//   final repo = ref.read(productRepositoryProvider);
+//   final categoryId = filter['categoryId']!;
+//   final typeName = filter['typeName'];
+
+//   return repo.filterProductsByCategory(categoryId: categoryId, typeName: typeName);
+// });
+
+
+// // final filteredProductsStreamProvider =
+// //     StreamProvider.family<List<ProductModel>, Map<String, String?>>((
+// //       ref,
+// //       filter,
+// //     ) {
+// //       final repo = ref.watch(productRepositoryProvider);
+// //       final categoryId = filter['categoryId'];
+// //       final typeName = filter['typeName'];
+
+// //       return repo.filterProducts(categoryId: categoryId, typeName: typeName);
+// //     });
+
+// // StreamProvider<List<ProductModel>> productsByFilterProvider({ String? categoryId, String? typeName }) {
+// //   return StreamProvider<List<ProductModel>>((ref) {
+// //     final repo = ref.watch(productRepositoryProvider);
+// //     return repo.filterProducts(categoryId: categoryId, typeName: typeName);
+// //   });
+// // }

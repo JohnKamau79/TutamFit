@@ -20,7 +20,7 @@ class CategoryRepository {
   }
 
   // Fetch all categories once
-  Future<List<CategoryModel>> fetchCategories() async {
+  Future<List<CategoryModel>> fetchCategoriesOnce() async {
     final snapshot = await _firestore.collection(_collection).get();
     return snapshot.docs
         .map((doc) => CategoryModel.fromJson({...doc.data(), 'id': doc.id}))
@@ -32,13 +32,13 @@ class CategoryRepository {
     await _firestore.collection(_collection).add(category.toJson());
   }
 
-  // Update existing category by id
-  Future<void> updateCategory(String docId, Map<String, dynamic> data) async {
-    await _firestore.collection(_collection).doc(docId).update(data);
-  }
+  // // Update existing category by id
+  // Future<void> updateCategory(String docId, Map<String, dynamic> data) async {
+  //   await _firestore.collection(_collection).doc(docId).update(data);
+  // }
 
-  // Delete category by id
-  Future<void> deleteCategory(String docId) async {
-    await _firestore.collection(_collection).doc(docId).delete();
-  }
+  // // Delete category by id
+  // Future<void> deleteCategory(String docId) async {
+  //   await _firestore.collection(_collection).doc(docId).delete();
+  // }
 }

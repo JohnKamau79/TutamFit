@@ -6,7 +6,12 @@ final categoryRepositoryProvider = Provider<CategoryRepository>((ref) {
   return CategoryRepository();
 });
 
-final categoryProvider = StreamProvider<List<CategoryModel>>((ref) {
-  final repo = ref.watch(categoryRepositoryProvider);
+final categoryStreamProvider = StreamProvider<List<CategoryModel>>((ref) {
+  final repo = ref.read(categoryRepositoryProvider);
   return repo.getAllCategories();
+});
+
+final categoryFetchFutureProvider = FutureProvider<List<CategoryModel>>((ref) {
+  final repo = ref.read(categoryRepositoryProvider);
+  return repo.fetchCategoriesOnce();
 });
