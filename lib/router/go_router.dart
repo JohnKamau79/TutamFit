@@ -25,6 +25,8 @@ import 'package:tutam_fit/screens/messaging/support_chat_screen.dart';
 import 'package:tutam_fit/screens/messaging/system_messages_screen.dart';
 import 'package:tutam_fit/screens/products/product_details_screen.dart';
 import 'package:tutam_fit/screens/products/product_filter_screen.dart';
+import 'package:tutam_fit/screens/search/search_filter_screen.dart';
+import 'package:tutam_fit/screens/search/search_screen.dart';
 import 'package:tutam_fit/screens/splash_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -62,6 +64,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/product', builder: (_, _) => ProductDetailsScreen()),
       GoRoute(path: '/product-form', builder: (_, _) => ProductForm()),
+      GoRoute(path: '/search', builder: (_, _) => SearchScreen()),
+      GoRoute(path: '/search-filter-screen', builder: (_, _) => SearchFilterScreen()),
       GoRoute(
         path: '/product-filter',
         builder: (_, _) => ProductFilterScreen(),

@@ -7,16 +7,18 @@ import 'package:tutam_fit/models/product_model.dart';
 import 'package:tutam_fit/providers/product_provider.dart';
 
 class ProductListWidget extends ConsumerWidget {
-  const ProductListWidget({super.key});
+  final List<ProductModel>? products;
+
+  const ProductListWidget({super.key, this.products});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsAsync = ref.watch(productsStreamProvider);
+    final productsAsync = products == null ? ref.watch(productsStreamProvider) : AsyncValue.data(products);
 
     return Expanded(
       child: productsAsync.when(
         data: (products) {
-          if (products.isEmpty) {
+          if (products!.isEmpty) {
             return const Center(child: Text('No products available'));
           }
 

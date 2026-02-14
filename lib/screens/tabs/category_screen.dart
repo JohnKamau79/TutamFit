@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
-import 'package:tutam_fit/widgets/searchbar_widget.dart';
+import 'package:tutam_fit/widgets/home_searchbar_widget.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({super.key});
@@ -134,7 +134,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
           child: Row(
             children: [
-              Expanded(child: SearchbarWidget()),
+              Expanded(child: HomeSearchbarWidget()),
               IconButton(
                 onPressed: () {
                   context.push('/category-form');

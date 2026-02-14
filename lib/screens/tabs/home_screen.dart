@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
-import 'package:tutam_fit/widgets/category_widget.dart';
-import 'package:tutam_fit/widgets/product_widget.dart';
-import 'package:tutam_fit/widgets/searchbar_widget.dart';
+import 'package:tutam_fit/widgets/category_list_widget.dart';
+import 'package:tutam_fit/widgets/product_list_widget.dart';
+import 'package:tutam_fit/widgets/home_searchbar_widget.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
           ),
           child: Row(
             children: [
-              Expanded(child: SearchbarWidget()),
+              Expanded(child: HomeSearchbarWidget()),
               IconButton(
                 onPressed: () {
                   context.push('/product-form');

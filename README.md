@@ -120,6 +120,15 @@
 - Updated product repository, provider, as well as changes home_screen to ConsumerStatefulWidget for dynamic data UI
 - Updated all models with id field
 
+# 13/2/2026
+- Fetched and streamed products to home-screen
+- Added category filtering to home-screen
+
+# 14/2/2026
+- Created and set up search screen with searchbar, filter screen to show products according to searchbar input
+- Used **Shared_Preferences for caching of recent searches** which are displayed in search screen.
+- Added additional filters to filter screen
+
 # COMMANDS
 
 - npm install -g firebase-tools
