@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
+import 'package:tutam_fit/providers/auth_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -35,11 +37,22 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
-        context.go('/main');
+        await _checkAuth();
       }
     });
+  }
+
+  Future<void> _checkAuth() async {
+    final authNotifier = ref.read(authStateProvider.notifier);
+    final loggedIn = await authNotifier.isUserLoggedIn();
+    if(loggedIn){
+    context.go('/main');}
+    else {
+      context.go('/main');
+    }
+
   }
 
   @override

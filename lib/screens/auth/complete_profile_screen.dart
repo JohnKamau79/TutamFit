@@ -1,53 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/providers/auth_provider.dart';
 
-class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key});
+class CompleteProfileScreen extends ConsumerStatefulWidget {
+  const CompleteProfileScreen({super.key});
 
   @override
-  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<CompleteProfileScreen> createState() =>
+      _CompleteProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
   final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
   String _role = 'user';
   bool _loading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    final user = ref.read(authStateProvider);
-    if (user != null) {
-      _phoneController.text = user.phone;
-      _cityController.text = user.city;
-      _role = user.role;
-    }
-  }
-
   void _saveProfile() async {
-    final user = ref.read(authStateProvider);
-    if (user == null) return;
-
     setState(() => _loading = true);
 
     try {
       await ref
           .read(authStateProvider.notifier)
           .updateProfile(
-            phone: _phoneController.text.trim(),
-            city: _cityController.text.trim(),
+            phone: _phoneController.text,
+            city: _cityController.text,
             role: _role,
           );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
-
-      context.pop(); // Go back to Account screen
+      context.go('/main');
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -55,6 +37,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } finally {
       setState(() => _loading = false);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(authStateProvider)!;
+    _phoneController.text = user.phone;
+    _cityController.text = user.city;
+    _role = user.role;
   }
 
   @override
@@ -66,32 +57,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authStateProvider);
-
-    if (user == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile'),
-          backgroundColor: AppColors.deepNavy,
-        ),
-        body: const Center(
-          child: Text('You must be logged in to view this screen.'),
-        ),
-      );
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: AppColors.deepNavy,
-      ),
+      appBar: AppBar(title: const Text('Complete Profile')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _buildReadOnlyField('Name', user.name),
-            _buildReadOnlyField('Email', user.email),
-            const SizedBox(height: 16),
             TextField(
               controller: _phoneController,
               decoration: const InputDecoration(labelText: 'Phone'),
@@ -102,7 +73,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: _role,
+              initialValue: _role,
               items: const [
                 DropdownMenuItem(value: 'user', child: Text('User')),
                 DropdownMenuItem(value: 'admin', child: Text('Admin')),
@@ -121,17 +92,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildReadOnlyField(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: TextField(
-        decoration: InputDecoration(labelText: label),
-        controller: TextEditingController(text: value),
-        readOnly: true,
       ),
     );
   }

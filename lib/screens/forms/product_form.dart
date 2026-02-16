@@ -55,29 +55,25 @@ class _ProductFormState extends ConsumerState<ProductForm> {
       pickedImages,
     );
 
-    // List<String> imageUrls = [];
-    // for (var path in images) {
-    //   final url = await uploadService.uploadProductImage(File(path));
-    //   if (url != null) imageUrls.add(url);
-    // }
+    final product = ProductModel(
+      id: null,
+      name: nameController.text.trim(),
+      description: descController.text.trim(),
+      price: double.parse(priceController.text.trim()),
+      categoryId: selectedCategoryId!,
+      typeName: selectedType!.id,
+      imageUrls: uploadedImageUrls,
+      stock: int.parse(stockController.text.trim()),
+      rating: 0,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+    );
 
-    await ref
+    final productId = await ref
         .read(productRepositoryProvider)
-        .addProduct(
-          ProductModel(
-            id: '',
-            name: nameController.text.trim(),
-            description: descController.text.trim(),
-            price: double.parse(priceController.text.trim()),
-            categoryId: selectedCategoryId!,
-            typeName: selectedType!.id,
-            imageUrls: uploadedImageUrls,
-            stock: int.parse(stockController.text.trim()),
-            rating: 0,
-            createdAt: Timestamp.now(),
-            updatedAt: Timestamp.now(),
-          ),
-        );
+        .addProduct(product);
+
+    print('Product saved with ID: $productId');
 
     setState(() {
       isSubmitting = false;

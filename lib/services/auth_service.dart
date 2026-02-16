@@ -1,78 +1,91 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:tutam_fit/models/user_model.dart';
-// import 'package:tutam_fit/repositories/user_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:tutam_fit/models/user_model.dart';
+import 'package:tutam_fit/repositories/user_repository.dart';
 
-// class AuthService {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
-//   final GoogleSignIn _googleSignIn = GoogleSignIn();
-//   final UserRepository _userRepo;
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final UserRepository _userRepo;
 
-//   AuthService(this._userRepo);
+  AuthService(this._userRepo);
 
-//   Future<User?> signUpWithEmail(
-//     String email,
-//     String password,
-//     String name,
-//   ) async {
-//     final cred = await _auth.createUserWithEmailAndPassword(
-//       email: email,
-//       password: password,
-//     );
+  FirebaseAuth get auth => _auth;
 
-//     await _userRepo.addUser(
-//       UserModel(
-//         name: name, 
-//         email: email, 
-//         phone: '', 
-//         city: '', 
-//         role: 'user', 
-//         createdAt: Timestamp.now(), 
-//         updatedAt: Timestamp.now(),
-//       ),
-//       cred.user!.uid
-//     );
+  Future<User?> signUpWithEmail(
+    String email,
+    String password,
+  ) async {
+    final cred = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-//     return cred.user;
-//   }
+    await _userRepo.addUser(
+      UserModel(
+        name: '',
+        email: email,
+        phone: '',
+        city: '',
+        role: 'user',
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      ),
+      cred.user!.uid,
+    );
 
-//   Future<User?> signInWithEmail(String email, String password) async {
-//     final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
-//     return cred.user;
-//   }
+    return cred.user;
+  }
 
-//   Future<User?> signInWithGoogle() async{
-//     final googleUser = await _googleSignIn.signIn();
-//     if(googleUser == null) return null;
+  Future<User?> signInWithEmail(String email, String password) async {
+    final cred = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return cred.user;
+  }
 
-//     final googleAuth = await googleUser.authentication;
+  Future<User?> signInWithGoogle() async {
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) return null;
 
-//     final credential = GoogleAuthProvider.credential(
-//       accessToken: googleAuth.accessToken,
-//       idToken: googleAuth.idToken,
-//     );
+    final googleAuth = await googleUser.authentication;
 
-//     final userCred = await _auth.signInWithCredential(credential);
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-//     await _userRepo.addUser(
-//       UserModel(
-//         name: userCred.user?.displayName ?? '',
-//         email: userCred.user?.email ?? '',
-//         phone: '',
-//         city: '',
-//         role: 'user',
-//         createdAt: Timestamp.now(),
-//         updatedAt: Timestamp.now(),
-//       ),
-//       userCred.user!.uid,
-//     );
+    final userCred = await _auth.signInWithCredential(credential);
 
-//     return userCred.user;
-//   }
+    final uid = userCred.user!.uid;
 
-//   Future<void> signOut() async{
-//     await _googleSignIn.signOut();
-//     await _auth.signOut();
-//   }
-// }
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
+
+    if (!doc.exists) {
+      await _userRepo.addUser(
+        UserModel(
+          name: userCred.user?.displayName ?? '',
+          email: userCred.user?.email ?? '',
+          phone: '',
+          city: '',
+          role: 'user',
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        ),
+        uid,
+      );
+    }
+
+    return userCred.user;
+  }
+
+  Future<void> signOut() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+  }
+}

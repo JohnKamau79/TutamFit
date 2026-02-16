@@ -5,11 +5,10 @@ part 'cart_model.g.dart';
 
 @JsonSerializable()
 class CartItem {
-  final String? id;
   final String productId;
   final int quantity;
 
-  CartItem({this.id, required this.productId, required this.quantity});
+  CartItem({required this.productId, required this.quantity});
 
   factory CartItem.fromJson(Map<String, dynamic> json) =>
       _$CartItemFromJson(json);
@@ -18,7 +17,6 @@ class CartItem {
 
 @JsonSerializable()
 class CartModel {
-  final String? id;
   final String userId;
   final List<CartItem> items;
 
@@ -26,7 +24,6 @@ class CartModel {
   final Timestamp updatedAt;
 
   CartModel({
-    this.id,
     required this.userId,
     required this.items,
     required this.updatedAt,

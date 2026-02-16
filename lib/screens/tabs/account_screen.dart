@@ -1,113 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
+import 'package:tutam_fit/providers/auth_provider.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authStateProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: Center(
-          child: const Text(
-            'Account Center',
-            style: TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
+        title: Row(
+          children: [
+            Expanded(
+              child: const Text(
+                'Account Center',
+                style: TextStyle(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+            IconButton(
+              onPressed: () {
+                context.push('/signup');
+              },
+              icon: Icon(Icons.app_registration, color: AppColors.white),
+            ),
+          ],
         ),
         backgroundColor: AppColors.deepNavy,
       ),
       body: ListView(
         children: [
-          _ProfileHeader(),
+          _ProfileHeader(user: user),
           const SizedBox(height: 8),
           _sectionTitle('My Activity'),
           _accountItem(
             icon: Icons.favorite,
             title: 'Wishlist',
-            onTap: () {
-              context.push('/wishlist');
-            },
+            onTap: user != null ? () => context.push('/wishlist') : null,
           ),
           _accountItem(
             icon: Icons.shopping_bag,
             title: 'My Orders',
-            onTap: () {
-              context.push('/orders');
-            },
+            onTap: user != null ? () => context.push('/orders') : null,
           ),
           _accountItem(
             icon: Icons.star,
             title: 'Ratings',
-            onTap: () {
-              context.push('/ratings');
-            },
+            onTap: () => context.push('/ratings'),
           ),
           _accountItem(
             icon: Icons.rate_review,
             title: 'Reviews',
-            onTap: () {
-              context.push('/reviews');
-            },
+            onTap: () => context.push('/reviews'),
           ),
           _accountItem(
             icon: Icons.history,
             title: 'Recently Viewed',
-            onTap: () {
-              context.push('/recently-viewed');
-            },
+            onTap: () => context.push('/recently-viewed'),
           ),
 
           _sectionTitle('Payments & Addresses'),
           _accountItem(
             icon: Icons.account_balance_wallet,
             title: 'Balance',
-            onTap: () {
-              context.push('/balance');
-            },
+            onTap: user != null ? () => context.push('/balance') : null,
           ),
           _accountItem(
             icon: Icons.location_on,
             title: 'Address Book',
-            onTap: () {
-              context.push('/address-book');
-            },
+            onTap: user != null ? () => context.push('/address-book') : null,
           ),
 
           _sectionTitle('Preferences'),
           _accountItem(
             icon: Icons.notifications,
             title: 'Notification Preferences',
-            onTap: () {
-              context.push('/notification-preferences');
-            },
+            onTap: () => context.push('/notification-preferences'),
           ),
           _accountItem(
             icon: Icons.settings,
             title: 'Settings',
-            onTap: () {
-              context.push('/settings');
-            },
+            onTap: () => context.push('/settings'),
           ),
 
           _sectionTitle('Support'),
           _accountItem(
             icon: Icons.help_outline,
             title: 'FAQ',
-            onTap: () {
-              context.push('/faq');
-            },
+            onTap: () => context.push('/faq'),
           ),
           _accountItem(
             icon: Icons.support_agent,
             title: 'Customer Service',
-            onTap: () {
-              context.push('/customer-service');
-            },
+            onTap: () => context.push('/customer-service'),
           ),
+
+          if (user != null) ...[
+            const SizedBox(height: 16),
+            _accountItem(
+              icon: Icons.logout,
+              title: 'Logout',
+              onTap: () async {
+                await ref.read(authStateProvider.notifier).logout();
+                context.go('/login');
+              },
+            ),
+          ],
         ],
       ),
     );
@@ -116,7 +120,7 @@ class AccountScreen extends StatelessWidget {
 
 Widget _sectionTitle(String title) {
   return Padding(
-    padding: const EdgeInsetsGeometry.fromLTRB(16, 16, 16, 8),
+    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
     child: Text(
       title,
       style: const TextStyle(
@@ -130,23 +134,32 @@ Widget _sectionTitle(String title) {
 Widget _accountItem({
   required IconData icon,
   required String title,
-  required VoidCallback onTap,
+  required VoidCallback? onTap,
 }) {
   return ListTile(
     leading: Icon(icon, color: AppColors.primaryRed),
     title: Text(title),
     trailing: const Icon(Icons.chevron_right),
     onTap: onTap,
+    enabled: onTap != null,
   );
 }
 
-class _ProfileHeader extends StatelessWidget {
+class _ProfileHeader extends ConsumerWidget {
+  final dynamic user;
+
+  const _ProfileHeader({this.user});
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Material(
       child: InkWell(
         onTap: () {
-          context.push('/profile');
+          if (user == null) {
+            context.push('/login');
+          } else {
+            context.push('/profile'); // Edit profile
+          }
         },
         child: Container(
           color: AppColors.darkGray,
@@ -161,19 +174,19 @@ class _ProfileHeader extends StatelessWidget {
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Guest User',
-                    style: TextStyle(
+                    user?.name ?? 'Guest User',
+                    style: const TextStyle(
                       color: AppColors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'Tap to login',
-                    style: TextStyle(color: AppColors.white),
+                    user == null ? 'Tap to login' : user.email,
+                    style: const TextStyle(color: AppColors.white),
                   ),
                 ],
               ),

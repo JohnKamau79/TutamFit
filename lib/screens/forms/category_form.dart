@@ -34,32 +34,29 @@ class _CategoryFormState extends State<CategoryForm> {
 
   Future<void> _pickCategoryImage() async {
     final file = await _uploadService.pickImage();
-    if(file != null) {
+    if (file != null) {
       setState(() {
         _categoryImageFile = file;
       });
     }
   }
-  
+
   Future<void> _pickTypeImage() async {
     final file = await _uploadService.pickImage();
-    if(file != null) {
+    if (file != null) {
       setState(() {
         _typeImageFile = file;
       });
     }
   }
 
-  void _addType() async{
+  void _addType() async {
     if (_typeNameController.text.isEmpty || _typeImageFile == null) return;
 
     final url = await _uploadService.uploadTypeImage(_typeImageFile!);
 
     setState(() {
-      _types.add({
-          'name': _typeNameController.text,
-          'imageUrl': url!,
-    });
+      _types.add({'name': _typeNameController.text, 'imageUrl': url!});
     });
     _typeNameController.clear();
     _typeImageFile = null;
@@ -74,8 +71,10 @@ class _CategoryFormState extends State<CategoryForm> {
   void _submitCategory() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if(_categoryImageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Pick a category image')));
+    if (_categoryImageFile == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Pick a category image')));
     }
 
     if (_types.isEmpty) {
@@ -85,9 +84,15 @@ class _CategoryFormState extends State<CategoryForm> {
       return;
     }
 
-    _categoryImageUrl = await _uploadService.uploadCategoryImage(_categoryImageFile!);
+    _categoryImageUrl = await _uploadService.uploadCategoryImage(
+      _categoryImageFile!,
+    );
 
-    await _uploadService.saveCategory(name: _nameController.text, imageUrl: _categoryImageUrl!, types: _types);
+    await _uploadService.saveCategory(
+      name: _nameController.text,
+      imageUrl: _categoryImageUrl!,
+      types: _types,
+    );
 
     // final category = CategoryModel(
     //   name: _nameController.text,
@@ -125,8 +130,15 @@ class _CategoryFormState extends State<CategoryForm> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 10,),
-              ElevatedButton(onPressed: _pickCategoryImage, child: Text(_categoryImageFile == null ? 'Pick Category Image' : 'Category Image Selected'),),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _pickCategoryImage,
+                child: Text(
+                  _categoryImageFile == null
+                      ? 'Pick Category Image'
+                      : 'Category Image Selected',
+                ),
+              ),
               const SizedBox(height: 20),
               const Text(
                 'Types',
@@ -139,7 +151,11 @@ class _CategoryFormState extends State<CategoryForm> {
                 itemBuilder: (context, index) {
                   final type = _types[index];
                   return ListTile(
-                    leading: Image.network(type['imageUrl']!, width: 40, height: 40,),
+                    leading: Image.network(
+                      type['imageUrl']!,
+                      width: 40,
+                      height: 40,
+                    ),
                     title: Text(type['name']!),
                     trailing: IconButton(
                       onPressed: () => _removeType(index),
@@ -154,7 +170,14 @@ class _CategoryFormState extends State<CategoryForm> {
                 controller: _typeNameController,
                 decoration: const InputDecoration(labelText: 'Type Name'),
               ),
-              ElevatedButton(onPressed: _pickTypeImage, child: Text(_typeImageFile == null ? 'Pick Type Image' : 'Type Image Selected')),
+              ElevatedButton(
+                onPressed: _pickTypeImage,
+                child: Text(
+                  _typeImageFile == null
+                      ? 'Pick Type Image'
+                      : 'Type Image Selected',
+                ),
+              ),
               ElevatedButton(
                 onPressed: _addType,
                 child: const Text('Add Type'),

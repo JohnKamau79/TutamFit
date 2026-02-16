@@ -88,8 +88,26 @@ class ProductRepository {
   }
 
   // Add new product
-  Future<void> addProduct(ProductModel product) async {
-    await _productCollection.add(product.toJson());
+  Future<String> addProduct(ProductModel product) async {
+    final docRef = _productCollection.doc();
+
+    final productWithId = ProductModel(
+      id: docRef.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      categoryId: product.categoryId,
+      typeName: product.typeName,
+      imageUrls: product.imageUrls,
+      stock: product.stock,
+      rating: product.rating,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    );
+
+    await docRef.set(productWithId.toJson());
+
+    return docRef.id;
   }
 
   // Update existing product

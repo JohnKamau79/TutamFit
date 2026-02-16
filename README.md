@@ -129,6 +129,13 @@
 - Used **Shared_Preferences for caching of recent searches** which are displayed in search screen.
 - Added additional filters to filter screen
 
+# 15/2/2026
+- Set up product_details_screen
+
+# 16/2/2026
+- Set up user auth for **google sign-in** and **EmailAndPassword** and session token with **shared_preferences**
+- Set up cart and wishlist logic. [ updated cart MRP and created wishlist MRP ] yet to work
+
 # COMMANDS
 
 - npm install -g firebase-tools

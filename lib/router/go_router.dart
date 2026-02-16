@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tutam_fit/models/product_model.dart';
 import 'package:tutam_fit/screens/account/address_book_screen.dart';
 import 'package:tutam_fit/screens/account/balance_screen.dart';
 import 'package:tutam_fit/screens/account/customer_service_screen.dart';
@@ -13,12 +14,15 @@ import 'package:tutam_fit/screens/account/recently_viewed_screen.dart';
 import 'package:tutam_fit/screens/account/reviews_screen.dart';
 import 'package:tutam_fit/screens/account/settings_screen.dart';
 import 'package:tutam_fit/screens/account/wishlist_screen.dart';
-import 'package:tutam_fit/screens/auth/login_screen.dart';
-import 'package:tutam_fit/screens/auth/signup_screen.dart';
+import 'package:tutam_fit/screens/auth/complete_profile_screen.dart';
+// import 'package:tutam_fit/screens/auth/login_screen.dart';
+// import 'package:tutam_fit/screens/auth/signup_screen.dart';
 import 'package:tutam_fit/screens/cart/checkout_screen.dart';
 import 'package:tutam_fit/screens/cart/edit_cart_screen.dart';
 import 'package:tutam_fit/screens/forms/category_form.dart';
 import 'package:tutam_fit/screens/forms/product_form.dart';
+import 'package:tutam_fit/screens/auth/login_screen.dart';
+import 'package:tutam_fit/screens/auth/register_screen.dart';
 import 'package:tutam_fit/screens/main_screen.dart';
 import 'package:tutam_fit/screens/messaging/order_updates_screen.dart';
 import 'package:tutam_fit/screens/messaging/support_chat_screen.dart';
@@ -44,28 +48,43 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: '/main', builder: (_, _) => MainScreen()),
+      // GoRoute(
+      //   path: '/login',
+      //   pageBuilder: (context, state) {
+      //     return CustomTransitionPage(
+      //       key: state.pageKey,
+      //       transitionDuration: const Duration(milliseconds: 300),
+      //       child: const LoginScreen(),
+      //       transitionsBuilder: (context, animation, _, child) {
+      //         return FadeTransition(opacity: animation, child: child);
+      //       },
+      //     );
+      //   },
+      // ),
+      GoRoute(path: '/login', builder: (_, _) => LoginScreen()),
+      GoRoute(path: '/signup', builder: (_, _) => RegisterScreen()),
       GoRoute(
-        path: '/login',
-        pageBuilder: (context, state) {
-          return CustomTransitionPage(
-            key: state.pageKey,
-            transitionDuration: const Duration(milliseconds: 300),
-            child: const LoginScreen(),
-            transitionsBuilder: (context, animation, _, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-          );
-        },
+        path: '/complete-profile',
+        builder: (_, _) => CompleteProfileScreen(),
       ),
-      GoRoute(path: '/signup', builder: (_, _) => SignupScreen()),
       GoRoute(
         path: '/category-form',
         builder: (context, state) => CategoryForm(),
       ),
-      GoRoute(path: '/product', builder: (_, _) => ProductDetailsScreen()),
+      GoRoute(
+        path: '/product',
+        builder: (context, state) {
+          final product = state.extra as ProductModel;
+
+          return ProductDetailsScreen(product: product);
+        },
+      ),
       GoRoute(path: '/product-form', builder: (_, _) => ProductForm()),
       GoRoute(path: '/search', builder: (_, _) => SearchScreen()),
-      GoRoute(path: '/search-filter-screen', builder: (_, _) => SearchFilterScreen()),
+      GoRoute(
+        path: '/search-filter-screen',
+        builder: (_, _) => SearchFilterScreen(),
+      ),
       GoRoute(
         path: '/product-filter',
         builder: (_, _) => ProductFilterScreen(),
