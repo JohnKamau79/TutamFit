@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       // Check if profile is complete
       if (user != null &&
-          (user.phone.isEmpty || user.city.isEmpty || user.role.isEmpty)) {
+          (user.phone.isEmpty || user.city.isEmpty || user.role!.isEmpty)) {
         context.push('/complete-profile'); // Redirect to complete profile
       } else {
         context.go('/main'); // Go to Home if profile complete

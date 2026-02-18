@@ -14,7 +14,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
-  String _role = 'user';
+  // String _role = 'user';
   bool _loading = false;
 
   @override
@@ -24,7 +24,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (user != null) {
       _phoneController.text = user.phone;
       _cityController.text = user.city;
-      _role = user.role;
+      // _role = user.role;
     }
   }
 
@@ -40,7 +40,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           .updateProfile(
             phone: _phoneController.text.trim(),
             city: _cityController.text.trim(),
-            role: _role,
+            role: 'user',
           );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,18 +100,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               controller: _cityController,
               decoration: const InputDecoration(labelText: 'City'),
             ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: _role,
-              items: const [
-                DropdownMenuItem(value: 'user', child: Text('User')),
-                DropdownMenuItem(value: 'admin', child: Text('Admin')),
-              ],
-              onChanged: (value) {
-                if (value != null) _role = value;
-              },
-              decoration: const InputDecoration(labelText: 'Role'),
-            ),
+            // const SizedBox(height: 8),
+            // DropdownButtonFormField<String>(
+            //   initialValue: _role,
+            //   items: const [
+            //     DropdownMenuItem(value: 'user', child: Text('User')),
+            //     DropdownMenuItem(value: 'admin', child: Text('Admin')),
+            //   ],
+            //   onChanged: (value) {
+            //     if (value != null) _role = value;
+            //   },
+            //   decoration: const InputDecoration(labelText: 'Role'),
+            // ),
             const SizedBox(height: 16),
             _loading
                 ? const CircularProgressIndicator()

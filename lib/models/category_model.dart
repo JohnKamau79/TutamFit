@@ -1,3 +1,4 @@
+// category_model.dart
 import 'package:json_annotation/json_annotation.dart';
 
 part 'category_model.g.dart';
@@ -8,7 +9,7 @@ class CategoryType {
   final String name;
   final String? imageUrl;
 
-  CategoryType({this.id ,required this.name, required this.imageUrl});
+  CategoryType({this.id, required this.name, required this.imageUrl});
 
   factory CategoryType.fromJson(Map<String, dynamic> json) =>
       _$CategoryTypeFromJson(json);
@@ -20,8 +21,7 @@ class CategoryModel {
   final String? id;
   final String name;
   final String? imageUrl;
-  // @JsonKey(fromJson: _typesFromJson)
-  final List<CategoryType>? types;
+  final List<CategoryType> types;
 
   CategoryModel({
     this.id,
@@ -33,11 +33,4 @@ class CategoryModel {
   factory CategoryModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryModelFromJson(json);
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
-
-  // static List<CategoryType> _typesFromJson(List<dynamic>? json) {
-  //   if (json == null) return [];
-  //   return json
-  //       .map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
-  //       .toList();
-  // }
 }

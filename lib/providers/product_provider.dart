@@ -1,25 +1,33 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../models/product_model.dart';
-import '../repositories/product_repository.dart';
+import 'package:tutam_fit/models/product_model.dart';
+import 'package:tutam_fit/repositories/product_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Create a product repository instance
+// ----------------------------
+// Product Repository Provider
+// ----------------------------
 final productRepositoryProvider = Provider<ProductRepository>((ref) {
   return ProductRepository();
 });
 
+// ----------------------------
 // CATEGORY STATE-PROVIDER
+// ----------------------------
 final selectedCategoryProvider = StateProvider<String>((ref) => 'all');
 
+// ----------------------------
 // SEARCH STATE-PROVIDER
+// ----------------------------
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-// SEARCH HISTORY-PROVIDER
-final recentSearchesProvider = StateNotifierProvider<RecentSearchNotifier, List<String>>((ref) {
-  return RecentSearchNotifier();
-});
-
+// ----------------------------
+// SEARCH HISTORY PROVIDER
+// ----------------------------
+final recentSearchesProvider =
+    StateNotifierProvider<RecentSearchNotifier, List<String>>((ref) {
+      return RecentSearchNotifier();
+    });
 
 class RecentSearchNotifier extends StateNotifier<List<String>> {
   RecentSearchNotifier() : super([]) {
@@ -33,33 +41,39 @@ class RecentSearchNotifier extends StateNotifier<List<String>> {
     state = prefs.getStringList(key) ?? [];
   }
 
-  Future<void> addSearch(String query) async{
+  Future<void> addSearch(String query) async {
     query = query.trim();
     if (query.isEmpty) return;
 
-    final updated = [query, ...state.where((s) => s != query)].take(10).toList();
-
+    final updated = [
+      query,
+      ...state.where((s) => s != query),
+    ].take(10).toList();
     state = updated;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList(key, updated);
   }
 
-  void clear() async{
+  Future<void> clear() async {
     state = [];
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(key);
   }
 }
 
+// ----------------------------
 // SORT LOGIC
+// ----------------------------
 enum ProductSort { latest, oldest, priceLow, priceHigh }
 
 final productFilterProvider = StateProvider<ProductSort?>((ref) => null);
 final minPriceProvider = StateProvider<double?>((ref) => null);
 final maxPriceProvider = StateProvider<double?>((ref) => null);
 
-// SEARCH CATEGORY SCREEN FILTER
+// ----------------------------
+// SEARCH + FILTER PROVIDER
+// ----------------------------
 final searchProductsStreamProvider =
     StreamProvider.autoDispose<List<ProductModel>>((ref) {
       final repo = ref.read(productRepositoryProvider);
@@ -68,26 +82,24 @@ final searchProductsStreamProvider =
       final minPrice = ref.watch(minPriceProvider);
       final maxPrice = ref.watch(maxPriceProvider);
 
-      return repo.getAllProducts().map((products) {
-        if (searchQuery.isEmpty) {
-          return [];
-        }
-        List<ProductModel> filtered = products
-            .where((p) => p.name.toLowerCase().contains(searchQuery))
-            .toList();
-
-        if (filtered.isEmpty) {
-          filtered = List.from(products);
+      return repo.streamAllProducts().map((products) {
+        // Filter by search query
+        List<ProductModel> filtered = products;
+        if (searchQuery.isNotEmpty) {
+          filtered = filtered
+              .where((p) => p.name.toLowerCase().contains(searchQuery))
+              .toList();
         }
 
+        // Filter by price
         if (minPrice != null) {
           filtered = filtered.where((p) => p.price >= minPrice).toList();
         }
-
         if (maxPrice != null) {
           filtered = filtered.where((p) => p.price <= maxPrice).toList();
         }
 
+        // Sorting
         if (sortOption != null) {
           switch (sortOption) {
             case ProductSort.latest:
@@ -109,7 +121,9 @@ final searchProductsStreamProvider =
       });
     });
 
-// HOME SCREEN CATEGORY FILTER
+// ----------------------------
+// HOME CATEGORY + SEARCH FILTER PROVIDER
+// ----------------------------
 final productsStreamProvider = StreamProvider.autoDispose<List<ProductModel>>((
   ref,
 ) {
@@ -117,53 +131,29 @@ final productsStreamProvider = StreamProvider.autoDispose<List<ProductModel>>((
   final selectedCategory = ref.watch(selectedCategoryProvider);
   final searchQuery = ref.watch(searchQueryProvider).toLowerCase();
 
-  if (searchQuery.isEmpty) {
-    if (selectedCategory == 'all') {
-      return repo.getAllProducts();
-    } else {
-      return repo.getFilteredProducts(categoryId: selectedCategory);
-    }
+  Stream<List<ProductModel>> stream;
+
+  if (selectedCategory == 'all') {
+    stream = repo.streamAllProducts();
+  } else {
+    stream = repo.streamProductsByCategory(selectedCategory);
   }
 
-  return repo.getFilteredProducts(categoryId: null);
+  return stream.map((products) {
+    // Filter by search query
+    if (searchQuery.isNotEmpty) {
+      products = products
+          .where((p) => p.name.toLowerCase().contains(searchQuery))
+          .toList();
+    }
+    return products;
+  });
 });
 
-// // Watch for product changes
-// final allProductsStreamProvider = StreamProvider<List<ProductModel>>((ref) {
-//   final repo = ref.read(productRepositoryProvider);
-//   return repo.getAllProducts();
-// });
-
-// final productsFutureProvider = FutureProvider<List<ProductModel>>((ref) {
-//   final repo = ref.read(productRepositoryProvider);
-//   return repo.fetchProductsOnce();
-// });
-
-
-// final productsByCategoryFutureProvider = StreamProvider.family<List<ProductModel>, Map<String, String?>>((ref, filter) {
-//   final repo = ref.read(productRepositoryProvider);
-//   final categoryId = filter['categoryId']!;
-//   final typeName = filter['typeName'];
-
-//   return repo.filterProductsByCategory(categoryId: categoryId, typeName: typeName);
-// });
-
-
-// // final filteredProductsStreamProvider =
-// //     StreamProvider.family<List<ProductModel>, Map<String, String?>>((
-// //       ref,
-// //       filter,
-// //     ) {
-// //       final repo = ref.watch(productRepositoryProvider);
-// //       final categoryId = filter['categoryId'];
-// //       final typeName = filter['typeName'];
-
-// //       return repo.filterProducts(categoryId: categoryId, typeName: typeName);
-// //     });
-
-// // StreamProvider<List<ProductModel>> productsByFilterProvider({ String? categoryId, String? typeName }) {
-// //   return StreamProvider<List<ProductModel>>((ref) {
-// //     final repo = ref.watch(productRepositoryProvider);
-// //     return repo.filterProducts(categoryId: categoryId, typeName: typeName);
-// //   });
-// // }
+// ----------------------------
+// ALL PRODUCTS STREAM
+// ----------------------------
+final allProductsStreamProvider = StreamProvider<List<ProductModel>>((ref) {
+  final repo = ref.read(productRepositoryProvider);
+  return repo.streamAllProducts();
+});

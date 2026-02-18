@@ -10,7 +10,7 @@ class ProductModel {
   final String description;
   final double price;
   final String categoryId;
-  final String? typeName;
+  final String typeId;
   final List<String> imageUrls;
   final int stock;
   final double rating;
@@ -27,7 +27,7 @@ class ProductModel {
     required this.description,
     required this.price,
     required this.categoryId,
-    this.typeName,
+    required this.typeId,
     required this.imageUrls,
     required this.stock,
     required this.rating,
@@ -37,6 +37,7 @@ class ProductModel {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$ProductModelToJson(this);
 }
 

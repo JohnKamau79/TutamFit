@@ -45,7 +45,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
     final user = ref.read(authStateProvider)!;
     _phoneController.text = user.phone;
     _cityController.text = user.city;
-    _role = user.role;
+    _role = user.role!;
   }
 
   @override
@@ -71,18 +71,18 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
               controller: _cityController,
               decoration: const InputDecoration(labelText: 'City'),
             ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              initialValue: _role,
-              items: const [
-                DropdownMenuItem(value: 'user', child: Text('User')),
-                DropdownMenuItem(value: 'admin', child: Text('Admin')),
-              ],
-              onChanged: (value) {
-                if (value != null) _role = value;
-              },
-              decoration: const InputDecoration(labelText: 'Role'),
-            ),
+            // const SizedBox(height: 8),
+            // DropdownButtonFormField<String>(
+            //   initialValue: _role,
+            //   items: const [
+            //     DropdownMenuItem(value: 'user', child: Text('User')),
+            //     DropdownMenuItem(value: 'admin', child: Text('Admin')),
+            //   ],
+            //   onChanged: (value) {
+            //     if (value != null) _role = value;
+            //   },
+            //   decoration: const InputDecoration(labelText: 'Role'),
+            // ),
             const SizedBox(height: 16),
             _loading
                 ? const CircularProgressIndicator()

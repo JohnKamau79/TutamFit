@@ -10,23 +10,28 @@ import 'package:tutam_fit/screens/account/notification_preferences_screen.dart';
 import 'package:tutam_fit/screens/account/orders_screen.dart';
 import 'package:tutam_fit/screens/account/profile_screen.dart';
 import 'package:tutam_fit/screens/account/ratings_screen.dart';
-import 'package:tutam_fit/screens/account/recently_viewed_screen.dart';
 import 'package:tutam_fit/screens/account/reviews_screen.dart';
 import 'package:tutam_fit/screens/account/settings_screen.dart';
 import 'package:tutam_fit/screens/account/wishlist_screen.dart';
+import 'package:tutam_fit/screens/admin/all_orders_screen.dart';
+import 'package:tutam_fit/screens/admin/all_products_screen.dart';
+import 'package:tutam_fit/screens/admin/all_admin_reviews_screen.dart';
+import 'package:tutam_fit/screens/admin/all_users_screen.dart';
+import 'package:tutam_fit/screens/admin/update_product_screen.dart';
+import 'package:tutam_fit/screens/admin/admin_dashboard_screen.dart';
 import 'package:tutam_fit/screens/auth/complete_profile_screen.dart';
-// import 'package:tutam_fit/screens/auth/login_screen.dart';
-// import 'package:tutam_fit/screens/auth/signup_screen.dart';
 import 'package:tutam_fit/screens/cart/checkout_screen.dart';
 import 'package:tutam_fit/screens/cart/edit_cart_screen.dart';
-import 'package:tutam_fit/screens/forms/category_form.dart';
-import 'package:tutam_fit/screens/forms/product_form.dart';
+import 'package:tutam_fit/screens/forms/add_review_screen.dart';
+import 'package:tutam_fit/screens/forms/add_category_screen.dart';
+import 'package:tutam_fit/screens/forms/add_product_screen.dart';
 import 'package:tutam_fit/screens/auth/login_screen.dart';
 import 'package:tutam_fit/screens/auth/register_screen.dart';
 import 'package:tutam_fit/screens/main_screen.dart';
 import 'package:tutam_fit/screens/messaging/order_updates_screen.dart';
 import 'package:tutam_fit/screens/messaging/support_chat_screen.dart';
 import 'package:tutam_fit/screens/messaging/system_messages_screen.dart';
+import 'package:tutam_fit/screens/products/all_reviews_screen.dart';
 import 'package:tutam_fit/screens/products/product_details_screen.dart';
 import 'package:tutam_fit/screens/products/product_filter_screen.dart';
 import 'package:tutam_fit/screens/search/search_filter_screen.dart';
@@ -48,38 +53,51 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(path: '/main', builder: (_, _) => MainScreen()),
-      // GoRoute(
-      //   path: '/login',
-      //   pageBuilder: (context, state) {
-      //     return CustomTransitionPage(
-      //       key: state.pageKey,
-      //       transitionDuration: const Duration(milliseconds: 300),
-      //       child: const LoginScreen(),
-      //       transitionsBuilder: (context, animation, _, child) {
-      //         return FadeTransition(opacity: animation, child: child);
-      //       },
-      //     );
-      //   },
-      // ),
+      GoRoute(path: '/admin', builder: (_, _) => AdminDashboardScreen()),
+      GoRoute(path: '/admin', builder: (_, _) => AdminDashboardScreen()),
+      GoRoute(path: '/add-product', builder: (_, _) => AddProductScreen()),
+      GoRoute(
+        path: '/update-product',
+        builder: (context, state) {
+          final product = state.extra as ProductModel;
+          return UpdateProductScreen(product: product);
+        },
+      ),
+      GoRoute(path: '/add-category', builder: (_, _) => AddCategoryScreen()),
+      GoRoute(path: '/all-products', builder: (_, _) => AllProductsScreen()),
+      GoRoute(path: '/all-reviews', builder: (_, _) => AllReviewsScreen()),
+      GoRoute(
+        path: '/all-admin-reviews',
+        builder: (_, _) => AllAdminReviewsScreen(),
+      ),
+      GoRoute(
+        path: '/add-review',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>;
+          final productId = extra['productId']!;
+          final productName = extra['productName']!;
+          return AddReviewScreen(
+            productId: productId,
+            productName: productName,
+          );
+        },
+      ),
+      GoRoute(path: '/all-orders', builder: (_, _) => AllOrdersScreen()),
+      GoRoute(path: '/all-users', builder: (_, _) => AllUsersScreen()),
       GoRoute(path: '/login', builder: (_, _) => LoginScreen()),
-      GoRoute(path: '/signup', builder: (_, _) => RegisterScreen()),
+      GoRoute(path: '/register', builder: (_, _) => RegisterScreen()),
       GoRoute(
         path: '/complete-profile',
         builder: (_, _) => CompleteProfileScreen(),
       ),
       GoRoute(
-        path: '/category-form',
-        builder: (context, state) => CategoryForm(),
-      ),
-      GoRoute(
-        path: '/product',
+        path: '/product-details',
         builder: (context, state) {
           final product = state.extra as ProductModel;
 
           return ProductDetailsScreen(product: product);
         },
       ),
-      GoRoute(path: '/product-form', builder: (_, _) => ProductForm()),
       GoRoute(path: '/search', builder: (_, _) => SearchScreen()),
       GoRoute(
         path: '/search-filter-screen',
@@ -91,12 +109,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/checkout', builder: (_, _) => CheckoutScreen()),
       GoRoute(path: '/cart-edit', builder: (_, _) => EditCartScreen()),
-      GoRoute(path: '/orders', builder: (_, _) => OrdersScreen()),
-      GoRoute(path: '/reviews', builder: (_, _) => ReviewsScreen()),
-      GoRoute(
-        path: '/recently-viewed',
-        builder: (_, _) => RecentlyViewedScreen(),
-      ),
+      GoRoute(path: '/user-orders', builder: (_, _) => OrdersScreen()),
+      GoRoute(path: '/user-reviews', builder: (_, _) => MyReviewsScreen()),
       GoRoute(path: '/ratings', builder: (_, _) => RatingsScreen()),
       GoRoute(path: '/balance', builder: (_, _) => BalanceScreen()),
       GoRoute(path: '/address-book', builder: (_, _) => AddressBookScreen()),
@@ -118,12 +132,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/system-messages',
         builder: (_, _) => SystemMessagesScreen(),
       ),
-
-      // GoRoute(
-      //   path: '/product/:id',
-      //   builder: (_, state) {
-      //     ProductDetailsScreen( productId: state.params['id']!);
-      //   },
     ],
   );
 });

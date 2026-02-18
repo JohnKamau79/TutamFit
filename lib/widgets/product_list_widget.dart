@@ -13,13 +13,26 @@ class ProductListWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productsAsync = products == null ? ref.watch(productsStreamProvider) : AsyncValue.data(products);
+    final productsAsync = products == null
+        ? ref.watch(allProductsStreamProvider)
+        : AsyncValue.data(products);
+
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Expanded(
       child: productsAsync.when(
         data: (products) {
           if (products!.isEmpty) {
             return const Center(child: Text('No products available'));
+          }
+
+          // Filter by selected category
+          final filteredProducts = selectedCategory == 'all'
+              ? products
+              : products.where((p) => p.categoryId == selectedCategory).toList();
+
+          if (filteredProducts.isEmpty) {
+            return const Center(child: Text('No products in this category'));
           }
 
           return GridView.builder(
@@ -30,9 +43,9 @@ class ProductListWidget extends ConsumerWidget {
               crossAxisSpacing: 16,
               childAspectRatio: 0.75,
             ),
-            itemCount: products.length,
+            itemCount: filteredProducts.length,
             itemBuilder: (context, index) {
-              final ProductModel product = products[index];
+              final ProductModel product = filteredProducts[index];
 
               return Container(
                 decoration: BoxDecoration(
@@ -44,7 +57,7 @@ class ProductListWidget extends ConsumerWidget {
                 ),
                 child: GestureDetector(
                   onTap: () {
-                    context.push('/product', extra: product);
+                    context.push('/product-details', extra: product);
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +66,7 @@ class ProductListWidget extends ConsumerWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppColors.darkGray,
-                            borderRadius: BorderRadius.vertical(
+                            borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(12),
                             ),
                           ),
@@ -64,17 +77,17 @@ class ProductListWidget extends ConsumerWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: Text(
                           product.name,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
                         child: Text(
                           'KES ${product.price.toStringAsFixed(0)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.darkGray,
                             fontWeight: FontWeight.bold,
                           ),
@@ -107,9 +120,7 @@ class ProductListWidget extends ConsumerWidget {
             ),
           ),
         ),
-        error: (err, stack) {
-          return Center(child: Text('Error : $err'));
-        },
+        error: (err, stack) => Center(child: Text('Error : $err')),
       ),
     );
   }

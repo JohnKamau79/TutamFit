@@ -6,14 +6,14 @@ import 'package:tutam_fit/constants/app_colors.dart';
 // import 'package:tutam_fit/repositories/category_repository.dart';
 import 'package:tutam_fit/services/cloudinary_upload_service.dart';
 
-class CategoryForm extends StatefulWidget {
-  const CategoryForm({super.key});
+class AddCategoryScreen extends StatefulWidget {
+  const AddCategoryScreen({super.key});
 
   @override
-  State<CategoryForm> createState() => _CategoryFormState();
+  State<AddCategoryScreen> createState() => _CategoryFormState();
 }
 
-class _CategoryFormState extends State<CategoryForm> {
+class _CategoryFormState extends State<AddCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   // final _imageUrlController = TextEditingController();
@@ -56,7 +56,11 @@ class _CategoryFormState extends State<CategoryForm> {
     final url = await _uploadService.uploadTypeImage(_typeImageFile!);
 
     setState(() {
-      _types.add({'name': _typeNameController.text, 'imageUrl': url!});
+      _types.add({
+        'id': DateTime.now().millisecondsSinceEpoch.toString(),
+        'name': _typeNameController.text,
+        'imageUrl': url!,
+      });
     });
     _typeNameController.clear();
     _typeImageFile = null;

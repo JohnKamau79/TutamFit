@@ -1,7 +1,12 @@
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import '../repositories/user_repository.dart';
-// // import '../models/user_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tutam_fit/models/user_model.dart';
+import 'package:tutam_fit/repositories/user_repository.dart';
 
-// final userRepositoryProvider = Provider<UserRepository>((ref) {
-//   return UserRepository();
-// });
+// Repository instance
+final userRepositoryProvider = Provider<UserRepository>((ref) => UserRepository());
+
+// Stream provider for all users
+final allUsersProvider = StreamProvider<List<UserModel>>((ref) {
+  final repo = ref.watch(userRepositoryProvider);
+  return repo.getAllUsers();
+});

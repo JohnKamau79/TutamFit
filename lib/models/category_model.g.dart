@@ -24,8 +24,8 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String?,
       name: json['name'] as String,
       imageUrl: json['imageUrl'] as String?,
-      types: (json['types'] as List<dynamic>?)
-          ?.map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
+      types: (json['types'] as List<dynamic>)
+          .map((e) => CategoryType.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -34,5 +34,5 @@ Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'imageUrl': instance.imageUrl,
-      'types': instance.types?.map((e) => e.toJson()).toList(),
+      'types': instance.types.map((e) => e.toJson()).toList(),
     };

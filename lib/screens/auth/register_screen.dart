@@ -50,7 +50,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final user = ref.read(authStateProvider);
 
       if (user != null &&
-          (user.phone.isEmpty || user.city.isEmpty || user.role.isEmpty)) {
+          (user.phone.isEmpty || user.city.isEmpty || user.role!.isEmpty)) {
         context.push('/complete-profile');
       } else {
         context.go('/main');

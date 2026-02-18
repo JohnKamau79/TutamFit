@@ -7,7 +7,9 @@ part 'review_model.g.dart';
 class ReviewModel {
   final String? id;
   final String userId;
+  final String userName;
   final String productId;
+  final String productName;
   final int rating;
   final String comment;
 
@@ -17,7 +19,9 @@ class ReviewModel {
   ReviewModel({
     this.id,
     required this.userId,
+    required this.userName,
     required this.productId,
+    required this.productName,
     required this.rating,
     required this.comment,
     required this.createdAt,

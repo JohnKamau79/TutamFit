@@ -1,122 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/product_model.dart';
+import 'package:tutam_fit/models/product_model.dart';
 
 class ProductRepository {
-  final CollectionReference _productCollection = FirebaseFirestore.instance
-      .collection('products');
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final _collection = 'products';
+  final _collection = FirebaseFirestore.instance.collection('products');
 
-  // Get all products
-  Stream<List<ProductModel>> getAllProducts() {
-    return _firestore
-        .collection(_collection)
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map(
-                (doc) => ProductModel.fromJson({...doc.data(), 'id': doc.id}),
-              )
-              .toList(),
-        );
+  Stream<List<ProductModel>> streamAllProducts() {
+    return _collection.snapshots().map(
+      (snapshot) => snapshot.docs.map((doc) {
+        final data = {...doc.data(), 'id': doc.id};
+        return ProductModel.fromJson(data);
+      }).toList(),
+    );
   }
 
-  Future<List<ProductModel>> fetchProductsOnce() async {
-    final snapshot = await _firestore.collection(_collection).get();
-    return snapshot.docs
-        .map((doc) => ProductModel.fromJson(doc.data()))
-        .toList();
-  }
-
-  // // Get products by category or type
-  // Stream<List<ProductModel>> filterProducts({
-  //   String? categoryId,
-  //   String? typeName,
-  // }) {
-  //   Query query = _productCollection;
-  //   if (categoryId != null) {
-  //     query = query.where('categoryId', isEqualTo: categoryId);
-  //   }
-  //   if (typeName != null) {
-  //     query = query.where('typeName', isEqualTo: typeName);
-  //   }
-
-  //   return query.snapshots().map((snapshot) {
-  //     return snapshot.docs.map((doc) {
-  //       final data = doc.data() as Map<String, dynamic>;
-  //       data['id'] = doc.id;
-  //       return ProductModel.fromJson(data);
-  //     }).toList();
-  //   });
-  // }
-
-  Stream<List<ProductModel>> filterProductsByCategory({
-    required String categoryId,
-    String? typeName,
+  Stream<List<ProductModel>> streamProductsByCategory(
+    String categoryId, {
+    String? typeId,
   }) {
-    Query query = _firestore
-        .collection(_collection)
-        .where('categoryId', isEqualTo: categoryId);
-
-    if (typeName != null) {
-      query = query.where('typeName', isEqualTo: typeName);
+    Query query = _collection.where('categoryId', isEqualTo: categoryId);
+    if (typeId != null) {
+      query = query.where('typeId', isEqualTo: typeId);
     }
-
     return query.snapshots().map(
       (snapshot) => snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
+        final data = {...(doc.data() as Map<String, dynamic>), 'id': doc.id};
         return ProductModel.fromJson(data);
       }).toList(),
     );
   }
 
-  Stream<List<ProductModel>> getFilteredProducts({String? categoryId}) {
-    Query query = _firestore.collection(_collection);
-
-    if (categoryId != null && categoryId != 'all') {
-      query = query.where('categoryId', isEqualTo: categoryId);
-    }
-
-    return query.snapshots().map(
-      (snap) => snap.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        data['id'] = doc.id;
-        return ProductModel.fromJson(data);
-      }).toList(),
-    );
-  }
-
-  // Add new product
   Future<String> addProduct(ProductModel product) async {
-    final docRef = _productCollection.doc();
-
-    final productWithId = ProductModel(
-      id: docRef.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      categoryId: product.categoryId,
-      typeName: product.typeName,
-      imageUrls: product.imageUrls,
-      stock: product.stock,
-      rating: product.rating,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
-    );
-
-    await docRef.set(productWithId.toJson());
-
+    final docRef = _collection.doc();
+    await docRef.set(product.toJson());
     return docRef.id;
   }
 
-  // Update existing product
-  Future<void> updateProduct(String docId, Map<String, dynamic> data) async {
-    await _productCollection.doc(docId).update(data);
+  Future<void> updateProduct(String productId, Map<String, Object> updatedData) async {
+  await _collection.doc(productId).update(updatedData);
   }
 
-  // Delete existing product
-  Future<void> deleteProduct(String docId) async {
-    await _productCollection.doc(docId).delete();
+  Future<void> deleteProduct(String productId) async {
+    await _collection.doc(productId).delete();
   }
 }

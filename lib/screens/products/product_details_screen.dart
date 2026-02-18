@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/constants/app_colors.dart';
-import 'package:tutam_fit/models/cart_model.dart';
 import 'package:tutam_fit/models/product_model.dart';
 import 'package:tutam_fit/providers/cart_provider.dart';
+import 'package:tutam_fit/providers/review_provider.dart';
 import 'package:tutam_fit/providers/wishlist_provider.dart';
 
 class ProductDetailsScreen extends ConsumerStatefulWidget {
@@ -54,30 +55,27 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           if (user != null)
             Consumer(
               builder: (context, ref, _) {
-                final wishlistAsync = ref.watch(wishlistProvider(user.uid));
-                return wishlistAsync.when(
-                  data: (wishlist) {
-                    final isInWishlist = wishlist.items.any(
-                      (item) => item.productId == product.id,
-                    );
-                    return IconButton(
-                      icon: Icon(
-                        isInWishlist ? Icons.favorite : Icons.favorite_border,
-                        color: AppColors.primaryRed,
-                      ),
-                      onPressed: () async {
-                        final repo = ref.read(wishlistRepositoryProvider);
-                        if (isInWishlist) {
-                          await repo.removeItem(user.uid, product.id!);
-                        } else {
-                          await repo.addItem(user.uid, product.id!);
-                        }
-                        ref.invalidate(wishlistProvider(user.uid));
-                      },
-                    );
+                return IconButton(
+                  icon: const Icon(Icons.favorite_border),
+                  onPressed: () async {
+                    try {
+                      await ref
+                          .read(wishlistRepositoryProvider)
+                          .addToWishlist(product);
+
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Added to wishlist')),
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please login first')),
+                      );
+                    }
                   },
-                  loading: () => const Icon(Icons.favorite_border),
-                  error: (_, __) => const Icon(Icons.favorite_border),
                 );
               },
             ),
@@ -86,96 +84,84 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
           const SizedBox(width: 12),
         ],
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            if (user != null)
-              Consumer(
-                builder: (context, ref, _) {
-                  final wishlistAsync = ref.watch(wishlistProvider(user.uid));
-                  return wishlistAsync.when(
-                    data: (wishlist) {
-                      final isInWishlist = wishlist.items.any(
-                        (item) => item.productId == product.id,
-                      );
-                      return IconButton(
-                        onPressed: () async {
-                          final repo = ref.read(wishlistRepositoryProvider);
-                          if (isInWishlist) {
-                            await repo.removeItem(user.uid, product.id!);
-                          } else {
-                            await repo.addItem(user.uid, product.id!);
-                          }
-                        },
-                        icon: Icon(
-                          isInWishlist ? Icons.favorite : Icons.favorite_border,
-                          color: AppColors.primaryRed,
-                        ),
-                      );
-                    },
-                    loading: () => const Icon(Icons.favorite_border),
-                    error: (_, _) => const Icon(Icons.favorite_border),
-                  );
-                },
-              )
-            else
-              IconButton(
-                onPressed: null,
-                icon: const Icon(Icons.favorite_border),
-              ),
-            const SizedBox(width: 12),
-            Flexible(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  if (user == null) {
-                    return ElevatedButton(
-                      onPressed: null,
-                      child: const Text("Login to Add to Cart"),
-                    );
-                  }
-                  final userId = user.uid;
-                  final cartAsync = ref.watch(cartProvider(userId));
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              if (user != null)
+                Consumer(
+                  builder: (context, ref, _) {
+                    return IconButton(
+                      icon: const Icon(Icons.favorite_border),
+                      onPressed: () async {
+                        try {
+                          await ref
+                              .read(wishlistRepositoryProvider)
+                              .addToWishlist(product);
 
-                  return cartAsync.when(
-                    data: (cart) {
-                      final isInCart = cart.items.any(
-                        (item) => item.productId == product.id,
-                      );
-                      final cartRepo = ref.read(cartRepositoryProvider);
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Added to wishlist')),
+                          );
+                        } catch (e) {
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please login first')),
+                          );
+                        }
+                      },
+                    );
+                  },
+                )
+              else
+                IconButton(
+                  onPressed: null,
+                  icon: const Icon(Icons.favorite_border),
+                ),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    if (user == null) {
                       return ElevatedButton(
-                        onPressed: isInCart
-                            ? null
-                            : () async {
-                                await cartRepo.addItem(
-                                  userId,
-                                  CartItem(productId: product.id!, quantity: 1),
-                                );
-                                ref.invalidate(cartProvider(userId));
-                              },
-                        child: Text(isInCart ? "Added to Cart" : "Add to Cart"),
+                        onPressed: null,
+                        child: const Text("Login to Add to Cart"),
                       );
-                    },
-                    loading: () => const ElevatedButton(
-                      onPressed: null,
-                      child: SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    ),
-                    error: (_, __) => ElevatedButton(
-                      onPressed: null,
-                      child: const Text("Error"),
-                    ),
-                  );
-                },
+                    }
+
+                    return ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await ref
+                              .read(cartRepositoryProvider)
+                              .addToCart(product);
+
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Added to cart'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        } catch (e) {
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please login first')),
+                          );
+                        }
+                      },
+                      child: const Text('Add to Cart'),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -265,21 +251,135 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen> {
 
             const SizedBox(height: 24),
 
-            /// CUSTOMER REVIEWS
+            /// Replace your old "CUSTOMER REVIEWS" section with this:
+            const SizedBox(height: 24),
+
+            /// CUSTOMER REVIEWS HEADER + ADD CTA
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   "Customer Reviews",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                TextButton(onPressed: () {}, child: const Text("View All")),
+                TextButton(
+                  onPressed: () {
+                    if (user != null) {
+                      context.push(
+                        '/all-reviews', // pass productId as path param
+                      );
+                    }
+                  },
+                  child: const Text("View All"),
+                ),
               ],
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
 
-            const Text("No reviews yet."),
+            /// Add Review CTA
+            if (user != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    context.push(
+                      '/add-review',
+                      extra: {'productId': product.id!, 'productName': product.name},
+                    );
+                  },
+                  icon: const Icon(Icons.add_comment),
+                  label: const Text('Add Review'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 12),
+
+            /// Horizontal preview of latest 3 reviews
+            Consumer(
+              builder: (context, ref, _) {
+                final reviewsAsync = ref.watch(reviewProvider(product.id!));
+
+                return reviewsAsync.when(
+                  data: (reviews) {
+                    if (reviews.isEmpty) {
+                      return const Text("No reviews yet.");
+                    }
+
+                    final preview = reviews.take(3).toList();
+
+                    return SizedBox(
+                      height: 140,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: preview.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final review = preview[index];
+                          return Container(
+                            width: 220,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "User: ${review.userId.substring(0, 6)}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: List.generate(
+                                    5,
+                                    (i) => Icon(
+                                      i < review.rating
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color: AppColors.vibrantOrange,
+                                      size: 16,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Expanded(
+                                  child: Text(
+                                    review.comment,
+                                    style: const TextStyle(fontSize: 13),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (err, stack) => const Text("Error loading reviews"),
+                );
+              },
+            ),
 
             const SizedBox(height: 24),
 

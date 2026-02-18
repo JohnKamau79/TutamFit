@@ -26,7 +26,7 @@ class AccountScreen extends ConsumerWidget {
             ),
             IconButton(
               onPressed: () {
-                context.push('/signup');
+                context.push('/register');
               },
               icon: Icon(Icons.app_registration, color: AppColors.white),
             ),
@@ -47,7 +47,7 @@ class AccountScreen extends ConsumerWidget {
           _accountItem(
             icon: Icons.shopping_bag,
             title: 'My Orders',
-            onTap: user != null ? () => context.push('/orders') : null,
+            onTap: user != null ? () => context.push('/user-orders') : null,
           ),
           _accountItem(
             icon: Icons.star,
@@ -57,19 +57,14 @@ class AccountScreen extends ConsumerWidget {
           _accountItem(
             icon: Icons.rate_review,
             title: 'Reviews',
-            onTap: () => context.push('/reviews'),
-          ),
-          _accountItem(
-            icon: Icons.history,
-            title: 'Recently Viewed',
-            onTap: () => context.push('/recently-viewed'),
+            onTap: () => context.push('/user-reviews'),
           ),
 
           _sectionTitle('Payments & Addresses'),
           _accountItem(
             icon: Icons.account_balance_wallet,
             title: 'Balance',
-            onTap: user != null ? () => context.push('/balance') : null,
+            onTap: user != null ? () => context.push('/admin') : null,
           ),
           _accountItem(
             icon: Icons.location_on,

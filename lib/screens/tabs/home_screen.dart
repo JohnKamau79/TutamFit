@@ -27,7 +27,7 @@ class HomeScreen extends ConsumerWidget {
               Expanded(child: HomeSearchbarWidget()),
               IconButton(
                 onPressed: () {
-                  context.push('/product-form');
+                  context.push('/add-product');
                 },
                 icon: Icon(Icons.shopping_bag),
               ),

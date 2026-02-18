@@ -1,87 +1,43 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/wishlist_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tutam_fit/models/product_model.dart';
+import 'package:tutam_fit/models/wishlist_model.dart';
 
 class WishlistRepository {
   final _firestore = FirebaseFirestore.instance;
-  final _collection = 'wishlist';
+  final _auth = FirebaseAuth.instance;
 
-  // Stream to listen to wishlist
-  Stream<WishlistModel> getWishlist(String userId) {
-    return _firestore
-        .collection(_collection)
-        .doc(userId)
-        .snapshots()
-        .map(
-          (doc) => doc.data() != null
-              ? WishlistModel.fromJson(doc.data()!)
-              : WishlistModel(
-                  userId: userId,
-                  items: [],
-                  updatedAt: Timestamp.now(),
-                ),
-        );
+  String? get _uid => _auth.currentUser?.uid;
+
+  CollectionReference<Map<String, dynamic>> _wishlistRef() {
+    return _firestore.collection('users').doc(_uid).collection('wishlist');
   }
 
-  // Add product to wishlist
-  Future<void> addItem(String userId, String productId) async {
-    final docRef = _firestore.collection(_collection).doc(userId);
-    final snapshot = await docRef.get();
+  Future<void> addToWishlist(ProductModel product) async {
+    if (_uid == null) throw Exception('User not logged in');
 
-    WishlistModel wishlist;
-
-    if (snapshot.exists) {
-      wishlist = WishlistModel.fromJson(snapshot.data()!);
-      if (!wishlist.items.any((i) => i.productId == productId)) {
-        wishlist.items.add(WishlistItem(productId: productId));
-      }
-      wishlist = WishlistModel(
-        userId: wishlist.userId,
-        items: wishlist.items,
-        updatedAt: Timestamp.now(),
-      );
-    } else {
-      wishlist = WishlistModel(
-        userId: userId,
-        items: [WishlistItem(productId: productId)],
-        updatedAt: Timestamp.now(),
-      );
-    }
-
-    await docRef.set(wishlist.toJson());
+    await _wishlistRef().doc(product.id).set({
+      'productId': product.id,
+      'name': product.name,
+      'price': product.price,
+      'image': product.imageUrls.isNotEmpty ? product.imageUrls.first : '',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 
-  // Remove product from wishlist
-  Future<void> removeItem(String userId, String productId) async {
-    final docRef = _firestore.collection(_collection).doc(userId);
-    final snapshot = await docRef.get();
-    if (!snapshot.exists) return;
+  Future<void> removeFromWishlist(String productId) async {
+    if (_uid == null) throw Exception('User not logged in');
 
-    WishlistModel wishlist = WishlistModel.fromJson(snapshot.data()!);
-    wishlist.items.removeWhere((i) => i.productId == productId);
-
-    if (wishlist.items.isEmpty) {
-      await docRef.delete();
-    } else {
-      wishlist = WishlistModel(
-        userId: wishlist.userId,
-        items: wishlist.items,
-        updatedAt: Timestamp.now(),
-      );
-      await docRef.set(wishlist.toJson());
-    }
+    await _wishlistRef().doc(productId).delete();
   }
 
-  // Clear wishlist
-  Future<void> clearWishlist(String userId) async {
-    await _firestore.collection(_collection).doc(userId).delete();
-  }
+  Stream<List<WishlistModel>> streamWishlist() {
+    if (_uid == null) return const Stream.empty();
 
-  // Check if product is in wishlist
-  Future<bool> isInWishlist(String userId, String productId) async {
-    final snapshot = await _firestore.collection(_collection).doc(userId).get();
-    if (!snapshot.exists) return false;
-
-    final wishlist = WishlistModel.fromJson(snapshot.data()!);
-    return wishlist.items.any((i) => i.productId == productId);
+    return _wishlistRef().snapshots().map((snapshot) {
+      return snapshot.docs
+          .map((doc) => WishlistModel.fromMap(doc.data()))
+          .toList();
+    });
   }
 }

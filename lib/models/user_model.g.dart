@@ -12,7 +12,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   email: json['email'] as String,
   phone: json['phone'] as String,
   city: json['city'] as String,
-  role: json['role'] as String,
+  role: json['role'] as String?,
   createdAt: _timestampFromJson(json['createdAt'] as Timestamp),
   updatedAt: _timestampFromJson(json['updatedAt'] as Timestamp),
 );

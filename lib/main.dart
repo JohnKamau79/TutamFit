@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/firebase_options.dart';
 import 'package:tutam_fit/router/go_router.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  Stripe.publishableKey = '<YOUR_STRIPE_PUBLISHABLE_KEY>';
   runApp(ProviderScope(child: MyApp()));
 }
 

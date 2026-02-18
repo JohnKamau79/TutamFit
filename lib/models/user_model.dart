@@ -10,7 +10,7 @@ class UserModel {
   final String email;
   final String phone;
   final String city;
-  final String role;
+  final String? role;
 
   @JsonKey(fromJson: _timestampFromJson, toJson: _timestampToJson)
   final Timestamp createdAt;
@@ -24,7 +24,7 @@ class UserModel {
     required this.email,
     required this.phone,
     required this.city,
-    required this.role,
+    this.role,
     required this.createdAt,
     required this.updatedAt,
   });

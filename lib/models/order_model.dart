@@ -1,61 +1,53 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-part 'order_model.g.dart';
-
-@JsonSerializable()
-class OrderItem {
-  final String productId;
-  final int quantity;
-  final double price;
-
-  OrderItem({
-    required this.productId,
-    required this.price,
-    required this.quantity,
-  });
-
-  factory OrderItem.fromJson(Map<String, dynamic> json) =>
-      _$OrderItemFromJson(json);
-  Map<String, dynamic> toJson() => _$OrderItemToJson(this);
-}
-
-@JsonSerializable()
 class OrderModel {
-  final String? id;
+  final String id;
   final String userId;
-  final List<OrderItem> products;
-  final double totalPrice;
-  final String currency;
-  final String status;
-  final String paymentMethod;
-  final String? paymentStatus;
-  final String? paymentRef;
-
-  @JsonKey(fromJson: _timestampFromJson, toJson: _timestampToJson)
+  final String userName;
+  final List<Map<String, dynamic>>
+  items; // productId, name, price, quantity, image
+  final double totalAmount;
+  final String paymentMethod; // 'mpesa' | 'stripe'
+  final String status; // 'pending', 'paid', 'failed', 'delivered'
   final Timestamp createdAt;
-
-  @JsonKey(fromJson: _timestampFromJson, toJson: _timestampToJson)
-  final Timestamp updatedAt;
+  final Timestamp? updatedAt;
 
   OrderModel({
-    this.id,
+    required this.id,
     required this.userId,
-    required this.products,
-    required this.totalPrice,
-    required this.currency,
-    required this.status,
+    required this.userName,
+    required this.items,
+    required this.totalAmount,
     required this.paymentMethod,
-    this.paymentStatus,
-    this.paymentRef,
+    required this.status,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
-  factory OrderModel.fromJson(Map<String, dynamic> json) =>
-      _$OrderModelFromJson(json);
-  Map<String, dynamic> toJson() => _$OrderModelToJson(this);
-}
+  factory OrderModel.fromMap(Map<String, dynamic> map, String id) {
+    return OrderModel(
+      id: id,
+      userId: map['userId'],
+      userName: map['userName'],
+      items: List<Map<String, dynamic>>.from(map['items']),
+      totalAmount: (map['totalAmount'] as num).toDouble(),
+      paymentMethod: map['paymentMethod'],
+      status: map['status'],
+      createdAt: map['createdAt'],
+      updatedAt: map['updatedAt'],
+    );
+  }
 
-Timestamp _timestampFromJson(Timestamp timestamp) => timestamp;
-Timestamp _timestampToJson(Timestamp timestamp) => timestamp;
+  Map<String, dynamic> toMap() {
+    return {
+      'userId': userId,
+      'userName': userName,
+      'items': items,
+      'totalAmount': totalAmount,
+      'paymentMethod': paymentMethod,
+      'status': status,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+    };
+  }
+}
