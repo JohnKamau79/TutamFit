@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/providers/product_provider.dart';
 
 class SearchSearchbarWidget extends ConsumerStatefulWidget {
@@ -47,7 +45,7 @@ class _SearchSearchbarWidgetState extends ConsumerState<SearchSearchbarWidget> {
       decoration: InputDecoration(
         hintText: 'Search Products...',
         border: InputBorder.none,
-        contentPadding: EdgeInsets.all(12),
+        contentPadding: const EdgeInsets.all(12),
         suffixIcon: IconButton(
           onPressed: searchQuery.isNotEmpty
               ? () {
@@ -58,11 +56,9 @@ class _SearchSearchbarWidgetState extends ConsumerState<SearchSearchbarWidget> {
                   if (widget.onSearchTap != null) {
                     widget.onSearchTap!(query);
                   }
-
-                  // context.push('/search-filter-screen');
                 }
               : null,
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search),
         ),
       ),
     );

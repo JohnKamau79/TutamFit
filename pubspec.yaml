@@ -80,12 +80,12 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/tutamfit.png"
+  image_path: "assets/tutamfitt.png"
 
 flutter_native_splash:
-  color: "#E53935"
+  color: "#0D47A1"
   android_12:
-    color: "#E53935"
+    color: "#0D47A1"
   android: true
   ios: true
 

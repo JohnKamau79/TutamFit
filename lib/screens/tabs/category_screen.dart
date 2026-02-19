@@ -1,68 +1,61 @@
+// category_screen.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/providers/category_provider.dart';
+import 'package:tutam_fit/widgets/home_searchbar_widget.dart';
 
 class CategoryScreen extends ConsumerWidget {
   const CategoryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final categoriesAsync = ref.watch(categoriesStreamProvider);
     final selectedCategory = ref.watch(selectedCategoryProviders);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.deepNavy,
+        backgroundColor: theme.primaryColor,
         elevation: 0,
         title: Container(
           height: 45,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Search',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () => context.push('/add-category'),
-                icon: Icon(Icons.add_box_rounded, color: AppColors.vibrantOrange),
-              ),
-            ],
+          child: const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: HomeSearchbarWidget(),
           ),
         ),
       ),
       body: categoriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text('Error: $e', style: theme.textTheme.bodyMedium)),
         data: (categories) {
           if (categories.isEmpty) {
-            return const Center(child: Text('No categories found'));
+            return Center(
+              child: Text(
+                'No categories found',
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
+              ),
+            );
           }
 
-          // Auto-select first category if none selected
           if (selectedCategory == null) {
             WidgetsBinding.instance.addPostFrameCallback(
               (_) => ref.read(selectedCategoryProviders.notifier).state = categories.first,
             );
-            return const SizedBox.shrink(); // Don't block UI
+            return const SizedBox.shrink();
           }
 
           return Column(
             children: [
-              // Category horizontal list
               SizedBox(
-                height: 90,
+                height: 70,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -70,7 +63,6 @@ class CategoryScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final cat = categories[index];
                     final isSelected = cat.id == selectedCategory.id;
-
                     return GestureDetector(
                       onTap: () => ref.read(selectedCategoryProviders.notifier).state = cat,
                       child: AnimatedContainer(
@@ -78,24 +70,18 @@ class CategoryScreen extends ConsumerWidget {
                         margin: const EdgeInsets.only(right: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.vibrantOrange : const Color.fromARGB(255, 223, 223, 223),
+                          color: isSelected ? theme.colorScheme.secondary : theme.cardColor,
                           borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            if (isSelected)
-                              BoxShadow(
-                                color: AppColors.deepNavy.withOpacity(0.3),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                          ],
+                          boxShadow: isSelected
+                              ? [BoxShadow(color: theme.shadowColor.withOpacity(0.3), blurRadius: 6, offset: const Offset(0, 3))]
+                              : [],
                         ),
                         child: Center(
                           child: Text(
                             cat.name,
-                            style: TextStyle(
-                              color: isSelected ? AppColors.white : AppColors.darkGray,
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              color: isSelected ? theme.colorScheme.onSecondary : theme.textTheme.bodyMedium?.color,
                             ),
                           ),
                         ),
@@ -104,8 +90,6 @@ class CategoryScreen extends ConsumerWidget {
                   },
                 ),
               ),
-
-              // Types grid
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -119,23 +103,13 @@ class CategoryScreen extends ConsumerWidget {
                     ),
                     itemBuilder: (context, index) {
                       final type = selectedCategory.types[index];
-
                       return GestureDetector(
-                        onTap: () => context.push('/product-filter', extra: {
-                          'categoryId': selectedCategory.id,
-                          'typeId': type.id,
-                        }),
+                        onTap: () => context.push('/product-filter', extra: {'categoryId': selectedCategory.id, 'typeId': type.id}),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(16),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: AppColors.white,
-                                blurRadius: 6,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
+                            boxShadow: [BoxShadow(color: theme.shadowColor.withOpacity(0.2), blurRadius: 6, offset: const Offset(0, 3))],
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,8 +118,8 @@ class CategoryScreen extends ConsumerWidget {
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                                   child: type.imageUrl != null
-                                      ? Image.network(type.imageUrl!, fit: BoxFit.cover)
-                                      : Container(color: AppColors.darkGray),
+                                      ? CachedNetworkImage(imageUrl: type.imageUrl!, fit: BoxFit.cover, width: double.infinity)
+                                      : Container(color: theme.disabledColor),
                                 ),
                               ),
                               Padding(
@@ -153,10 +127,7 @@ class CategoryScreen extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     type.name,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                    style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ),
@@ -175,3 +146,4 @@ class CategoryScreen extends ConsumerWidget {
     );
   }
 }
+

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/models/review_model.dart';
 import 'package:tutam_fit/providers/review_provider.dart';
-import 'package:tutam_fit/screens/admin/modern_card.dart';
+import 'modern_card.dart';
 
 class AllAdminReviewsScreen extends ConsumerWidget {
   const AllAdminReviewsScreen({super.key});
@@ -11,6 +11,7 @@ class AllAdminReviewsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final reviewsAsync = ref.watch(allReviewsProvider);
     final repo = ref.watch(reviewRepositoryProvider);
+    final theme = Theme.of(context);
 
     Future<void> confirmDelete(ReviewModel review) async {
       final result = await showDialog<bool>(
@@ -26,7 +27,9 @@ class AllAdminReviewsScreen extends ConsumerWidget {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+              ),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Delete'),
             ),
@@ -43,19 +46,23 @@ class AllAdminReviewsScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('All Reviews'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
       ),
       body: reviewsAsync.when(
         data: (reviews) {
           if (reviews.isEmpty) {
-            return const Center(child: Text('No reviews found'));
+            return Center(
+              child: Text(
+                'No reviews found',
+                style: theme.textTheme.bodyMedium,
+              ),
+            );
           }
-
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: reviews.length,
@@ -70,7 +77,9 @@ class AllAdminReviewsScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('Error: $err')),
+        error: (err, _) => Center(
+          child: Text('Error: $err', style: theme.textTheme.bodyMedium),
+        ),
       ),
     );
   }

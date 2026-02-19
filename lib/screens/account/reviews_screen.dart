@@ -9,6 +9,7 @@ class MyReviewsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = FirebaseAuth.instance.currentUser;
+    final theme = Theme.of(context);
 
     if (user == null) {
       return const Scaffold(
@@ -19,13 +20,7 @@ class MyReviewsScreen extends ConsumerWidget {
     final reviewsAsync = ref.watch(userReviewsProvider(user.uid));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        title: const Text("My Reviews"),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-      ),
+      appBar: AppBar(title: const Text("My Reviews")),
       body: reviewsAsync.when(
         data: (reviews) {
           if (reviews.isEmpty) {
@@ -41,23 +36,21 @@ class MyReviewsScreen extends ConsumerWidget {
               final review = reviews[index];
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 14),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      color: theme.shadowColor.withOpacity(0.15),
+                      blurRadius: 8,
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Product reference (optional: could fetch product name)
                     Text(
                       "Product Name: ${review.productName}",
                       style: const TextStyle(
@@ -66,23 +59,19 @@ class MyReviewsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-
-                    /// Comment
-                    Text(review.comment, style: const TextStyle(fontSize: 14)),
+                    Text(review.comment),
                     const SizedBox(height: 6),
-
-                    /// Date
                     Text(
                       review.createdAt.toDate().toLocal().toString().split(
                         ' ',
                       )[0],
                       style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: theme.textTheme.bodySmall?.color?.withOpacity(
+                          0.6,
+                        ),
                         fontSize: 12,
                       ),
                     ),
-
-                    /// Delete button
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton.icon(
@@ -102,9 +91,11 @@ class MyReviewsScreen extends ConsumerWidget {
                                 ),
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, true),
-                                  child: const Text(
+                                  child: Text(
                                     "Delete",
-                                    style: TextStyle(color: Colors.red),
+                                    style: TextStyle(
+                                      color: theme.colorScheme.error,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -117,13 +108,13 @@ class MyReviewsScreen extends ConsumerWidget {
                                 .deleteReview(review.id!);
                           }
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.delete_outline,
-                          color: Colors.red,
+                          color: theme.colorScheme.error,
                         ),
-                        label: const Text(
+                        label: Text(
                           "Delete",
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: theme.colorScheme.error),
                         ),
                       ),
                     ),
@@ -134,7 +125,7 @@ class MyReviewsScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) =>
+        error: (_, __) =>
             const Center(child: Text("Error loading your reviews")),
       ),
     );

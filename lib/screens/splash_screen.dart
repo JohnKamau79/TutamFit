@@ -47,12 +47,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   Future<void> _checkAuth() async {
     final authNotifier = ref.read(authStateProvider.notifier);
     final loggedIn = await authNotifier.isUserLoggedIn();
-    if(loggedIn){
-    context.go('/main');}
-    else {
+    if (loggedIn) {
+      context.go('/main');
+    } else {
       context.go('/main');
     }
-
   }
 
   @override
@@ -64,7 +63,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryRed,
+      backgroundColor: const Color(0xFF0D47A1),
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -73,14 +72,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/tutamfit.png', width: 120),
+                Image.asset('assets/tutamfit.png', width: 220),
                 const SizedBox(height: 16),
                 Text(
                   'Welcome To TutamFit',
                   style: TextStyle(
                     fontSize: 38,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.darkGray,
+                    color: AppColors.white,
                   ),
                 ),
               ],

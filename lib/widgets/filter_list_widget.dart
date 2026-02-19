@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/providers/product_provider.dart';
 
 class FilterListWidget extends ConsumerWidget {
@@ -12,9 +13,9 @@ class FilterListWidget extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: DropdownButton<ProductSort>(
-            dropdownColor: const Color.fromARGB(255, 255, 165, 56),
+            dropdownColor: AppColors.lighttGray,
             value: ref.watch(productFilterProvider),
-            hint: Text('Sort'),
+            hint: const Text('Sort'),
             items: ProductSort.values.map((e) {
               return DropdownMenuItem(value: e, child: Text(e.name));
             }).toList(),
@@ -23,7 +24,7 @@ class FilterListWidget extends ConsumerWidget {
             },
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
       ],
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/providers/wishlist_provider.dart';
@@ -9,6 +10,7 @@ class WishlistScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final wishlistAsync = ref.watch(wishlistStreamProvider);
     final wishlistRepo = ref.read(wishlistRepositoryProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Wishlist')),
@@ -23,19 +25,33 @@ class WishlistScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final item = items[index];
 
-              return ListTile(
-                leading: Image.network(
-                  item.image,
-                  width: 60,
-                  fit: BoxFit.cover,
+              return Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.withOpacity(0.15),
+                      blurRadius: 8,
+                    ),
+                  ],
                 ),
-                title: Text(item.name),
-                subtitle: Text('KES ${item.price}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    wishlistRepo.removeFromWishlist(item.productId);
-                  },
+                child: ListTile(
+                  leading: CachedNetworkImage(
+                    imageUrl: item.image,
+                    width: 60,
+                    fit: BoxFit.cover,
+                  ),
+                  title: Text(item.name),
+                  subtitle: Text('KES ${item.price}'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      wishlistRepo.removeFromWishlist(item.productId);
+                    },
+                  ),
                 ),
               );
             },

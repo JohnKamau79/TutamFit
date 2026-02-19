@@ -157,3 +157,13 @@ final allProductsStreamProvider = StreamProvider<List<ProductModel>>((ref) {
   final repo = ref.read(productRepositoryProvider);
   return repo.streamAllProducts();
 });
+
+// Stream by Type
+final recommendedProductsProvider =
+    StreamProvider.family<List<ProductModel>, ProductModel>((ref, product) {
+  final repo = ref.read(productRepositoryProvider);
+
+  return repo.streamProductsByType(product.typeId).map((products) {
+    return products.where((p) => p.id != product.id).toList();
+  });
+});

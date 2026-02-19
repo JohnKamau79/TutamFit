@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tutam_fit/models/user_model.dart';
 import 'package:tutam_fit/repositories/auth_repository.dart';
 
@@ -53,8 +55,18 @@ class AuthStateNotifier extends StateNotifier<UserModel?> {
     return await _repo.getCurrentUser();
   }
 
-  Future<void> loginEmail(String email, String password) async {
+  Future<void> loginEmail(
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     state = await _repo.loginWithEmail(email, password);
+
+    if (state != null) {
+      if (state!.role == 'admin') {
+        context.go('/admin');
+      }
+    }
   }
 
   Future<void> registerEmail({
@@ -75,8 +87,14 @@ class AuthStateNotifier extends StateNotifier<UserModel?> {
     );
   }
 
-  Future<void> loginGoogle() async {
+  Future<void> loginGoogle(BuildContext context) async {
     state = await _repo.loginWithGoogle();
+
+    if (state != null) {
+      if (state!.role == 'admin') {
+        context.go('/admin');
+      }
+    }
   }
 
   Future<void> logout() async {

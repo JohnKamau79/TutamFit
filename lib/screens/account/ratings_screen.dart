@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/providers/review_provider.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 
 class RatingsScreen extends ConsumerWidget {
   const RatingsScreen({super.key});
@@ -10,6 +9,7 @@ class RatingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = FirebaseAuth.instance.currentUser;
+    final theme = Theme.of(context);
 
     if (user == null) {
       return const Scaffold(
@@ -20,13 +20,7 @@ class RatingsScreen extends ConsumerWidget {
     final reviewsAsync = ref.watch(userReviewsProvider(user.uid));
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        title: const Text("My Ratings"),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-      ),
+      appBar: AppBar(title: const Text("My Ratings")),
       body: reviewsAsync.when(
         data: (reviews) {
           if (reviews.isEmpty) {
@@ -45,20 +39,18 @@ class RatingsScreen extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      color: theme.shadowColor.withOpacity(0.15),
+                      blurRadius: 8,
                     ),
                   ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Product reference (optional: could fetch product name)
                     Text(
                       "Product Name: ${review.productName}",
                       style: const TextStyle(
@@ -67,27 +59,25 @@ class RatingsScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-
-                    /// Stars
                     Row(
                       children: List.generate(
                         5,
                         (i) => Icon(
                           i < review.rating ? Icons.star : Icons.star_border,
-                          color: AppColors.vibrantOrange,
+                          color: theme.colorScheme.primary,
                           size: 16,
                         ),
                       ),
                     ),
                     const SizedBox(height: 8),
-
-                    /// Date
                     Text(
                       review.createdAt.toDate().toLocal().toString().split(
                         ' ',
                       )[0],
                       style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: theme.textTheme.bodySmall?.color?.withOpacity(
+                          0.6,
+                        ),
                         fontSize: 12,
                       ),
                     ),
@@ -98,7 +88,7 @@ class RatingsScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) =>
+        error: (_, __) =>
             const Center(child: Text("Error loading your reviews")),
       ),
     );

@@ -21,7 +21,7 @@ class SearchFilterScreen extends ConsumerWidget {
             child: TextField(
               controller: TextEditingController(text: searchQuery),
               decoration: const InputDecoration(
-                hintText: 'Search products...',
+                hintText: 'Search products',
                 prefixIcon: Icon(Icons.search),
                 border: InputBorder.none,
               ),
@@ -32,11 +32,13 @@ class SearchFilterScreen extends ConsumerWidget {
       body: Column(
         children: [
           FilterListWidget(),
-          Consumer(
-            builder: (context, ref, _) {
-              final productsAsync = ref.watch(searchProductsStreamProvider);
-              return ProductListWidget(products: productsAsync.asData?.value);
-            },
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final productsAsync = ref.watch(searchProductsStreamProvider);
+                return ProductListWidget(products: productsAsync.asData?.value);
+              },
+            ),
           ),
         ],
       ),

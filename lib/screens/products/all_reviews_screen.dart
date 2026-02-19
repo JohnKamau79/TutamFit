@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/providers/review_provider.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 
 class AllReviewsScreen extends ConsumerWidget {
   const AllReviewsScreen({super.key});
@@ -9,19 +8,25 @@ class AllReviewsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reviewsAsync = ref.watch(allReviewsProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('All Reviews'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.titleLarge?.color,
       ),
       body: reviewsAsync.when(
         data: (reviews) {
           if (reviews.isEmpty) {
-            return const Center(child: Text("No reviews yet."));
+            return Center(
+              child: Text(
+                "No reviews yet.",
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+              ),
+            );
           }
 
           return ListView.builder(
@@ -34,11 +39,11 @@ class AllReviewsScreen extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: theme.shadowColor.withOpacity(0.15),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -47,40 +52,49 @@ class AllReviewsScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// User
+                    // User
                     Text(
                       "User: ${review.userId.substring(0, 6)}",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 6),
 
-                    /// Stars
+                    // Stars
                     Row(
                       children: List.generate(
                         5,
                         (i) => Icon(
                           i < review.rating ? Icons.star : Icons.star_border,
-                          color: AppColors.vibrantOrange,
+                          color: theme.colorScheme.primary,
                           size: 16,
                         ),
                       ),
                     ),
                     const SizedBox(height: 8),
 
-                    /// Comment
-                    Text(review.comment, style: const TextStyle(fontSize: 14)),
+                    // Comment
+                    Text(
+                      review.comment,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
+                    ),
                     const SizedBox(height: 6),
 
-                    /// Date
+                    // Date
                     Text(
                       review.createdAt.toDate().toLocal().toString().split(
                         ' ',
                       )[0],
                       style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: theme.textTheme.bodySmall?.color?.withOpacity(
+                          0.6,
+                        ),
                         fontSize: 12,
                       ),
                     ),
@@ -91,8 +105,12 @@ class AllReviewsScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) =>
-            const Center(child: Text("Error loading reviews")),
+        error: (err, stack) => Center(
+          child: Text(
+            "Error loading reviews",
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
+        ),
       ),
     );
   }

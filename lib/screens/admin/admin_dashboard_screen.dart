@@ -6,17 +6,21 @@ class AdminDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Admin Panel',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.titleLarge?.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -90,6 +94,8 @@ class _ModernTileState extends State<_ModernTile> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -101,11 +107,11 @@ class _ModernTileState extends State<_ModernTile> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: theme.shadowColor.withOpacity(0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -118,13 +124,13 @@ class _ModernTileState extends State<_ModernTile> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F0FF),
+                  color: theme.colorScheme.primary.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
                   widget.icon,
                   size: 26,
-                  color: const Color(0xFF3366FF),
+                  color: theme.colorScheme.primary,
                 ),
               ),
               Column(
@@ -132,7 +138,7 @@ class _ModernTileState extends State<_ModernTile> {
                 children: [
                   Text(
                     widget.title,
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -140,7 +146,12 @@ class _ModernTileState extends State<_ModernTile> {
                   const SizedBox(height: 4),
                   Text(
                     widget.subtitle,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 13,
+                      color: theme.textTheme.bodyMedium?.color?.withOpacity(
+                        0.7,
+                      ),
+                    ),
                   ),
                 ],
               ),

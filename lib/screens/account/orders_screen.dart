@@ -8,23 +8,39 @@ class OrdersScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ordersAsync = ref.watch(userOrdersStreamProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('My Orders')),
       body: ordersAsync.when(
         data: (orders) {
-          if (orders.isEmpty) return const Center(child: Text('No orders yet'));
+          if (orders.isEmpty) {
+            return const Center(child: Text('No orders yet'));
+          }
 
           return ListView.builder(
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final order = orders[index];
-              return Card(
-                margin: const EdgeInsets.all(12),
+
+              return Container(
+                margin: const EdgeInsets.all(14),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.withOpacity(0.15),
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
                 child: ListTile(
                   title: Text('Order #${order.id}'),
                   subtitle: Text(
-                      '${order.items.length} items • ${order.paymentMethod} • ${order.status}'),
+                    '${order.items.length} items • ${order.paymentMethod} • ${order.status}',
+                  ),
                   trailing: Text('KES ${order.totalAmount.toStringAsFixed(0)}'),
                 ),
               );

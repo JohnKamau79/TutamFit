@@ -1,48 +1,44 @@
+// message_screen.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 
 class MessageScreen extends StatelessWidget {
   const MessageScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: AppColors.deepNavy,
-        title: Title(
-          color: AppColors.deepNavy,
-          child: Center(
-            child: Text(
-              'Messaging Center',
-              style: TextStyle(
-                color: AppColors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+        centerTitle: true,
+        elevation: 0,
+        title: const Text(
+          'Messages',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      // BODY
-      body: Column(
-        children: [
-          _MessageTile(
-            icon: Icons.receipt_long,
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        children: const [
+          _MessageCard(
+            icon: Icons.receipt_long_rounded,
             title: 'Order Updates',
-            subtitle: 'Track orders and delivery status',
-            onTap: () => context.push('/order-updates'),
+            subtitle: 'Track your deliveries',
+            route: '/order-updates',
           ),
-          _MessageTile(
-            icon: Icons.campaign,
+          _MessageCard(
+            icon: Icons.campaign_rounded,
             title: 'System Messages',
-            subtitle: 'Promotions and announcements',
-            onTap: () => context.push('/system-messages'),
+            subtitle: 'Promotions & news',
+            route: '/system-messages',
           ),
-          _MessageTile(
-            icon: Icons.support_agent,
+          _MessageCard(
+            icon: Icons.support_agent_rounded,
             title: 'Support Chat',
-            subtitle: 'Talk to TutamFit support',
-            onTap: () => context.push('/support-chat'),
+            subtitle: 'Talk to support',
+            route: '/support-chat',
           ),
         ],
       ),
@@ -50,54 +46,77 @@ class MessageScreen extends StatelessWidget {
   }
 }
 
-class _MessageTile extends StatelessWidget {
-  const _MessageTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
+class _MessageCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String subtitle;
-  final VoidCallback onTap;
+  final String route;
+
+  const _MessageCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.route,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-          decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: AppColors.darkGray)),
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Row(
-            children: [
-              Icon(icon, size: 32, color: AppColors.vibrantOrange),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(color: AppColors.limeGreen),
-                    ),
-                  ],
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => context.push(route),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: theme.colorScheme.primary, size: 22),
                 ),
-              ),
-              const Icon(Icons.chevron_right),
-            ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(subtitle, style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: theme.iconTheme.color,
+                ),
+              ],
+            ),
           ),
         ),
       ),

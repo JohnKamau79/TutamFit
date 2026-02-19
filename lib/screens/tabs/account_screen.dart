@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/providers/auth_provider.dart';
 
 class AccountScreen extends ConsumerWidget {
@@ -9,93 +8,100 @@ class AccountScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final user = ref.watch(authStateProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Expanded(
-              child: const Text(
-                'Account Center',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+        title: Center(
+          child: Text(
+            'Account Center',
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
             ),
-            IconButton(
-              onPressed: () {
-                context.push('/register');
-              },
-              icon: Icon(Icons.app_registration, color: AppColors.white),
-            ),
-          ],
+          ),
         ),
-        backgroundColor: AppColors.deepNavy,
+        backgroundColor: theme.primaryColor,
       ),
       body: ListView(
         children: [
           _ProfileHeader(user: user),
           const SizedBox(height: 8),
-          _sectionTitle('My Activity'),
+          // After the Support section, before Logout
+          if (user != null && user.role == 'admin') ...[
+            _sectionTitle('Admin', theme),
+            _accountItem(
+              icon: Icons.admin_panel_settings,
+              title: 'Admin',
+              onTap: () => context.push('/admin'),
+              theme: theme,
+            ),
+          ],
+          _sectionTitle('My Activity', theme),
           _accountItem(
             icon: Icons.favorite,
             title: 'Wishlist',
             onTap: user != null ? () => context.push('/wishlist') : null,
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.shopping_bag,
             title: 'My Orders',
             onTap: user != null ? () => context.push('/user-orders') : null,
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.star,
             title: 'Ratings',
             onTap: () => context.push('/ratings'),
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.rate_review,
             title: 'Reviews',
             onTap: () => context.push('/user-reviews'),
+            theme: theme,
           ),
-
-          _sectionTitle('Payments & Addresses'),
+          _sectionTitle('Payments & Addresses', theme),
           _accountItem(
             icon: Icons.account_balance_wallet,
             title: 'Balance',
-            onTap: user != null ? () => context.push('/admin') : null,
+            onTap: user != null ? () => context.push('/balance') : null,
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.location_on,
             title: 'Address Book',
             onTap: user != null ? () => context.push('/address-book') : null,
+            theme: theme,
           ),
-
-          _sectionTitle('Preferences'),
+          _sectionTitle('Preferences', theme),
           _accountItem(
             icon: Icons.notifications,
             title: 'Notification Preferences',
             onTap: () => context.push('/notification-preferences'),
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.settings,
             title: 'Settings',
             onTap: () => context.push('/settings'),
+            theme: theme,
           ),
-
-          _sectionTitle('Support'),
+          _sectionTitle('Support', theme),
           _accountItem(
             icon: Icons.help_outline,
             title: 'FAQ',
             onTap: () => context.push('/faq'),
+            theme: theme,
           ),
           _accountItem(
             icon: Icons.support_agent,
             title: 'Customer Service',
             onTap: () => context.push('/customer-service'),
+            theme: theme,
           ),
-
           if (user != null) ...[
             const SizedBox(height: 16),
             _accountItem(
@@ -104,7 +110,14 @@ class AccountScreen extends ConsumerWidget {
               onTap: () async {
                 await ref.read(authStateProvider.notifier).logout();
                 context.go('/login');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Logged out successfully'),
+                    backgroundColor: theme.colorScheme.secondary,
+                  ),
+                );
               },
+              theme: theme,
             ),
           ],
         ],
@@ -113,14 +126,14 @@ class AccountScreen extends ConsumerWidget {
   }
 }
 
-Widget _sectionTitle(String title) {
+Widget _sectionTitle(String title, ThemeData theme) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
     child: Text(
       title,
-      style: const TextStyle(
+      style: theme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
-        color: AppColors.darkGray,
+        color: theme.textTheme.bodyMedium?.color,
       ),
     ),
   );
@@ -130,11 +143,12 @@ Widget _accountItem({
   required IconData icon,
   required String title,
   required VoidCallback? onTap,
+  required ThemeData theme,
 }) {
   return ListTile(
-    leading: Icon(icon, color: AppColors.primaryRed),
-    title: Text(title),
-    trailing: const Icon(Icons.chevron_right),
+    leading: Icon(icon, color: theme.colorScheme.secondary),
+    title: Text(title, style: theme.textTheme.bodyMedium),
+    trailing: Icon(Icons.chevron_right, color: theme.unselectedWidgetColor),
     onTap: onTap,
     enabled: onTap != null,
   );
@@ -147,24 +161,26 @@ class _ProfileHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     return Material(
+      color: theme.cardColor,
       child: InkWell(
         onTap: () {
           if (user == null) {
             context.push('/login');
           } else {
-            context.push('/profile'); // Edit profile
+            context.push('/profile');
           }
         },
         child: Container(
-          color: AppColors.darkGray,
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 30,
-                backgroundColor: AppColors.limeGreen,
-                child: Icon(Icons.person, size: 30, color: AppColors.darkGray),
+                backgroundColor: theme.colorScheme.secondary,
+                child: Icon(Icons.person, size: 30, color: theme.cardColor),
               ),
               const SizedBox(width: 12),
               Column(
@@ -172,16 +188,17 @@ class _ProfileHeader extends ConsumerWidget {
                 children: [
                   Text(
                     user?.name ?? 'Guest User',
-                    style: const TextStyle(
-                      color: AppColors.white,
-                      fontSize: 18,
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     user == null ? 'Tap to login' : user.email,
-                    style: const TextStyle(color: AppColors.white),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
                   ),
                 ],
               ),

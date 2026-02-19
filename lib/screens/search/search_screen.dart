@@ -22,7 +22,6 @@ class SearchScreen extends ConsumerWidget {
           child: Row(
             children: [
               Expanded(child: SearchSearchbarWidget(onSearchTap: (query) { context.push('/search-filter-screen'); })),
-              IconButton(onPressed: () => context.push('/product-form'), icon: const Icon(Icons.shopping_bag)),
             ],
           ),
         ),
@@ -35,10 +34,13 @@ class SearchScreen extends ConsumerWidget {
                 children: recent.map((s) {
                   return GestureDetector(
                     onTap: () { ref.read(searchQueryProvider.notifier).state = s; context.push('/search-filter-screen'); },
-                    child: Container(
-                      color: const Color.fromRGBO(255, 235, 59, 0.2),
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      child: Text(s, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w500)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        color: AppColors.lighttGray,
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                        child: Text(s, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                      ),
                     ),
                   );
                 }).toList(),

@@ -10,21 +10,28 @@ class AllProductsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productsAsync = ref.watch(allProductsStreamProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('All Products'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
       ),
       body: productsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) =>
+            Center(child: Text('Error: $e', style: theme.textTheme.bodyMedium)),
         data: (products) {
           if (products.isEmpty) {
-            return const Center(child: Text('No products found'));
+            return Center(
+              child: Text(
+                'No products found',
+                style: theme.textTheme.bodyMedium,
+              ),
+            );
           }
 
           return ListView.builder(
@@ -37,11 +44,11 @@ class AllProductsScreen extends ConsumerWidget {
                 margin: const EdgeInsets.only(bottom: 14),
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
+                      color: theme.shadowColor.withOpacity(0.2),
                       blurRadius: 15,
                       offset: const Offset(0, 6),
                     ),
@@ -56,7 +63,7 @@ class AllProductsScreen extends ConsumerWidget {
                         children: [
                           Text(
                             product.name,
-                            style: const TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -64,12 +71,15 @@ class AllProductsScreen extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Text(
                             'KES ${product.price.toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.grey.shade600),
+                            style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Stock: ${product.stock}',
-                            style: TextStyle(color: Colors.grey.shade500),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.textTheme.bodyMedium?.color
+                                  ?.withOpacity(0.7),
+                            ),
                           ),
                         ],
                       ),
@@ -77,17 +87,23 @@ class AllProductsScreen extends ConsumerWidget {
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.edit_rounded),
+                          icon: Icon(
+                            Icons.edit_rounded,
+                            color: theme.iconTheme.color,
+                          ),
                           onPressed: () {
                             context.push('/update-product', extra: product);
                           },
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline),
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: theme.colorScheme.error,
+                          ),
                           onPressed: () async {
                             await ref
                                 .read(productRepositoryProvider)
-                                .deleteProduct(product.id!);
+                                .deleteProduct(product.id);
                           },
                         ),
                       ],

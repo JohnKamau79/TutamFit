@@ -26,8 +26,8 @@ class CategoryListWidget extends ConsumerWidget {
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           itemBuilder: (context, index) => Shimmer.fromColors(
-            baseColor: AppColors.darkGray,
-            highlightColor: AppColors.deepNavy,
+            baseColor: AppColors.deepNavy,
+            highlightColor: AppColors.white,
             child: Container(
               width: 80,
               decoration: BoxDecoration(
@@ -40,7 +40,7 @@ class CategoryListWidget extends ConsumerWidget {
       ),
       error: (err, stack) => SizedBox(
         height: 50,
-        child: Center(child: Text('Error loading categories: $err')),
+        child: Center(child: Text('Error loading categories')),
       ),
       data: (categories) {
         final selected = ref.watch(selectedCategoryProvider);
@@ -55,13 +55,13 @@ class CategoryListWidget extends ConsumerWidget {
                 onTap: () {
                   ref.read(selectedCategoryProvider.notifier).state = 'all';
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
                   child: Chip(
-                    label: const Text('All'),
-                    backgroundColor: selected == 'all'
-                        ? AppColors.vibrantOrange
-                        : null,
+                    label: Text(
+                      'All',
+                      style: TextStyle(color: AppColors.darkGray),
+                    ),
                   ),
                 ),
               ),
@@ -72,9 +72,12 @@ class CategoryListWidget extends ConsumerWidget {
                         category.id!;
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Chip(
-                      label: Text(category.name),
+                      label: Text(
+                        category.name,
+                        style: const TextStyle(color: AppColors.darkGray),
+                      ),
                       backgroundColor: selected == category.id
                           ? AppColors.vibrantOrange
                           : null,

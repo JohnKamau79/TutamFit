@@ -16,7 +16,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
-  String _role = 'user';
+  // String _role = 'user';
   bool _loading = false;
 
   void _registerEmail() async {
@@ -30,7 +30,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             password: _passwordController.text,
             phone: _phoneController.text.trim(),
             city: _cityController.text.trim(),
-            role: _role,
+            role: 'user',
           );
       context.go('/main'); // go to Home after registration
     } catch (e) {
@@ -45,7 +45,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   void _registerGoogle() async {
     setState(() => _loading = true);
     try {
-      await ref.read(authStateProvider.notifier).loginGoogle();
+      await ref.read(authStateProvider.notifier).loginGoogle(context);
       // go to Home after Google login
       final user = ref.read(authStateProvider);
 
@@ -74,68 +74,106 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
+  // Only showing the build method part changed for brevity
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(labelText: 'Phone'),
-            ),
-            TextField(
-              controller: _cityController,
-              decoration: const InputDecoration(labelText: 'City'),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              initialValue: _role,
-              items: const [
-                DropdownMenuItem(value: 'user', child: Text('User')),
-                DropdownMenuItem(value: 'admin', child: Text('Admin')),
-              ],
-              onChanged: (value) {
-                if (value != null) _role = value;
-              },
-              decoration: const InputDecoration(labelText: 'Role'),
-            ),
-            const SizedBox(height: 16),
-            _loading
-                ? const CircularProgressIndicator()
-                : Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: _registerEmail,
-                        child: const Text('Register'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _registerGoogle,
-                        child: const Text('Register with Google'),
-                      ),
-                      TextButton(
-                        onPressed: () => context.push('/login'),
-                        child: const Text('Already have an account? Login'),
-                      ),
-                    ],
-                  ),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              Text(
+                "Create Account",
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.withOpacity(0.1),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    _buildField(_nameController, "Name"),
+                    _buildField(_emailController, "Email"),
+                    _buildField(_passwordController, "Password", obscure: true),
+                    _buildField(_phoneController, "Phone"),
+                    _buildField(_cityController, "City"),
+                    const SizedBox(height: 24),
+
+                    _loading
+                        ? const CircularProgressIndicator()
+                        : Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _registerEmail,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: const Text("Register"),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: _registerGoogle,
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: const Text("Register with Google"),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(
+    TextEditingController controller,
+    String label, {
+    bool obscure = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        decoration: InputDecoration(labelText: label, filled: true),
       ),
     );
   }

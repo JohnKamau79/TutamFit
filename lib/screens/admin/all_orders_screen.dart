@@ -9,38 +9,40 @@ class AllOrdersScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ordersAsync = ref.watch(allOrdersStreamProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('All Orders'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
       ),
       body: ordersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) =>
+            Center(child: Text('Error: $e', style: theme.textTheme.bodyMedium)),
         data: (orders) {
           if (orders.isEmpty) {
-            return const Center(child: Text('No orders found'));
+            return Center(
+              child: Text('No orders found', style: theme.textTheme.bodyMedium),
+            );
           }
-
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: orders.length,
             itemBuilder: (context, index) {
               final OrderModel order = orders[index];
-
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: theme.shadowColor.withOpacity(0.2),
                       blurRadius: 15,
                       offset: const Offset(0, 6),
                     ),
@@ -55,7 +57,7 @@ class AllOrdersScreen extends ConsumerWidget {
                         children: [
                           Text(
                             'Order: ${order.id}',
-                            style: const TextStyle(
+                            style: theme.textTheme.bodyLarge?.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),
@@ -63,12 +65,12 @@ class AllOrdersScreen extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Text(
                             'Status: ${order.status}',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: theme.textTheme.bodyMedium,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Total: KES ${order.totalAmount.toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.grey.shade600),
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ],
                       ),
@@ -76,7 +78,10 @@ class AllOrdersScreen extends ConsumerWidget {
                     Column(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.delete_outline),
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: theme.colorScheme.error,
+                          ),
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
                               context: context,

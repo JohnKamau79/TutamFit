@@ -5,7 +5,8 @@ class ModernCard extends StatelessWidget {
   final String subtitle;
   final VoidCallback onDelete;
 
-  const ModernCard({super.key, 
+  const ModernCard({
+    super.key,
     required this.title,
     required this.subtitle,
     required this.onDelete,
@@ -13,18 +14,20 @@ class ModernCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(0.2),
             blurRadius: 15,
             offset: const Offset(0, 6),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -36,21 +39,25 @@ class ModernCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   subtitle,
-                  style: TextStyle(color: Colors.grey.shade600),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
             onPressed: onDelete,
-          )
+          ),
         ],
       ),
     );

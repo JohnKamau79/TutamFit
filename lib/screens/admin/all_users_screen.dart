@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tutam_fit/models/user_model.dart';
 import 'package:tutam_fit/providers/user_provider.dart';
-import 'package:tutam_fit/screens/admin/modern_card.dart';
+import 'modern_card.dart';
 
 class AllUsersScreen extends ConsumerWidget {
   const AllUsersScreen({super.key});
@@ -11,6 +11,7 @@ class AllUsersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final usersAsync = ref.watch(allUsersProvider);
     final userRepo = ref.watch(userRepositoryProvider);
+    final theme = Theme.of(context);
 
     Future<void> confirmDelete(UserModel user) async {
       final result = await showDialog<bool>(
@@ -24,7 +25,9 @@ class AllUsersScreen extends ConsumerWidget {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.error,
+              ),
               onPressed: () => Navigator.pop(context, true),
               child: const Text('Delete'),
             ),
@@ -41,17 +44,19 @@ class AllUsersScreen extends ConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('All Users'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.bodyLarge?.color,
       ),
       body: usersAsync.when(
         data: (users) {
           if (users.isEmpty) {
-            return const Center(child: Text('No users found'));
+            return Center(
+              child: Text('No users found', style: theme.textTheme.bodyMedium),
+            );
           }
 
           return ListView.builder(
@@ -68,7 +73,9 @@ class AllUsersScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('Error: $err')),
+        error: (err, _) => Center(
+          child: Text('Error: $err', style: theme.textTheme.bodyMedium),
+        ),
       ),
     );
   }

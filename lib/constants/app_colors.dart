@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const primaryRed = Color(0xFFE53935);
   static const darkGray = Color(0xFF212121);
+  static const lighttGray = Color.fromARGB(255, 236, 234, 234);
   static const deepNavy = Color(0xFF0D47A1);
   static const vibrantOrange = Color(0xFFFB8C00);
   static const limeGreen = Color(0xFFC0CA33);

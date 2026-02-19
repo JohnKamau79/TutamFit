@@ -68,24 +68,26 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Add Review'),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.titleLarge?.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: theme.shadowColor.withOpacity(0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -98,7 +100,11 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
               children: [
                 Text(
                   'Rate this product',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -109,7 +115,7 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
                         index < _rating
                             ? Icons.star_rounded
                             : Icons.star_border_rounded,
-                        color: Colors.amber,
+                        color: theme.colorScheme.secondary,
                         size: 30,
                       ),
                       onPressed: () {
@@ -127,12 +133,13 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
                   decoration: InputDecoration(
                     labelText: 'Comment',
                     filled: true,
-                    fillColor: const Color(0xFFF2F4F7),
+                    fillColor: theme.inputDecorationTheme.fillColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(18),
                       borderSide: BorderSide.none,
                     ),
                   ),
+                  style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 ),
                 const SizedBox(height: 30),
                 SizedBox(
@@ -147,9 +154,12 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
                     ),
                     child: _isSubmitting
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
+                        : Text(
                             'Submit Review',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: theme.textTheme.labelLarge?.color,
+                            ),
                           ),
                   ),
                 ),

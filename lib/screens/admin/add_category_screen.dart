@@ -1,9 +1,5 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
-// import 'package:tutam_fit/models/category_model.dart';
-// import 'package:tutam_fit/repositories/category_repository.dart';
 import 'package:tutam_fit/services/cloudinary_upload_service.dart';
 
 class AddCategoryScreen extends StatefulWidget {
@@ -16,45 +12,26 @@ class AddCategoryScreen extends StatefulWidget {
 class _CategoryFormState extends State<AddCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  // final _imageUrlController = TextEditingController();
   final UploadService _uploadService = UploadService();
-
   File? _categoryImageFile;
   String? _categoryImageUrl;
-
   final List<Map<String, String>> _types = [];
-
-  // final CategoryRepository _categoryRepo = CategoryRepository();
-
-  // List<CategoryType> _types = [];
-
   final _typeNameController = TextEditingController();
-  // final _typeImageController = TextEditingController();
   File? _typeImageFile;
 
   Future<void> _pickCategoryImage() async {
     final file = await _uploadService.pickImage();
-    if (file != null) {
-      setState(() {
-        _categoryImageFile = file;
-      });
-    }
+    if (file != null) setState(() => _categoryImageFile = file);
   }
 
   Future<void> _pickTypeImage() async {
     final file = await _uploadService.pickImage();
-    if (file != null) {
-      setState(() {
-        _typeImageFile = file;
-      });
-    }
+    if (file != null) setState(() => _typeImageFile = file);
   }
 
   void _addType() async {
     if (_typeNameController.text.isEmpty || _typeImageFile == null) return;
-
     final url = await _uploadService.uploadTypeImage(_typeImageFile!);
-
     setState(() {
       _types.add({
         'id': DateTime.now().millisecondsSinceEpoch.toString(),
@@ -66,21 +43,16 @@ class _CategoryFormState extends State<AddCategoryScreen> {
     _typeImageFile = null;
   }
 
-  void _removeType(int index) {
-    setState(() {
-      _types.removeAt(index);
-    });
-  }
+  void _removeType(int index) => setState(() => _types.removeAt(index));
 
   void _submitCategory() async {
     if (!_formKey.currentState!.validate()) return;
-
     if (_categoryImageFile == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Pick a category image')));
+      return;
     }
-
     if (_types.isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -91,20 +63,11 @@ class _CategoryFormState extends State<AddCategoryScreen> {
     _categoryImageUrl = await _uploadService.uploadCategoryImage(
       _categoryImageFile!,
     );
-
     await _uploadService.saveCategory(
       name: _nameController.text,
       imageUrl: _categoryImageUrl!,
       types: _types,
     );
-
-    // final category = CategoryModel(
-    //   name: _nameController.text,
-    //   imageUrl: _imageUrlController.text,
-    //   types: _types,
-    // );
-
-    // await _categoryRepo.addCategory(category);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Category added successfully!')),
@@ -120,8 +83,15 @@ class _CategoryFormState extends State<AddCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Category Form')),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text('Add Category'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.textTheme.titleLarge?.color,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -130,11 +100,19 @@ class _CategoryFormState extends State<AddCategoryScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Category Name'),
+                decoration: InputDecoration(
+                  labelText: 'Category Name',
+                  filled: true,
+                  fillColor: theme.cardColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Required' : null,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: _pickCategoryImage,
                 child: Text(
@@ -148,32 +126,46 @@ class _CategoryFormState extends State<AddCategoryScreen> {
                 'Types',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 8),
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: _types.length,
                 itemBuilder: (context, index) {
                   final type = _types[index];
-                  return ListTile(
-                    leading: Image.network(
-                      type['imageUrl']!,
-                      width: 40,
-                      height: 40,
-                    ),
-                    title: Text(type['name']!),
-                    trailing: IconButton(
-                      onPressed: () => _removeType(index),
-                      icon: Icon(Icons.delete),
-                      color: AppColors.primaryRed,
+                  return Card(
+                    color: theme.cardColor,
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      leading: Image.network(
+                        type['imageUrl']!,
+                        width: 40,
+                        height: 40,
+                      ),
+                      title: Text(type['name']!),
+                      trailing: IconButton(
+                        onPressed: () => _removeType(index),
+                        icon: const Icon(Icons.delete),
+                        color: Colors.redAccent,
+                      ),
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _typeNameController,
-                decoration: const InputDecoration(labelText: 'Type Name'),
+                decoration: InputDecoration(
+                  labelText: 'Type Name',
+                  filled: true,
+                  fillColor: theme.cardColor,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _pickTypeImage,
                 child: Text(
@@ -182,6 +174,7 @@ class _CategoryFormState extends State<AddCategoryScreen> {
                       : 'Type Image Selected',
                 ),
               ),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: _addType,
                 child: const Text('Add Type'),

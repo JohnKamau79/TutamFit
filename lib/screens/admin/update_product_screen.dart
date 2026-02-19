@@ -58,7 +58,7 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
     try {
       await ref
           .read(productRepositoryProvider)
-          .updateProduct(widget.product.id!, updatedData);
+          .updateProduct(widget.product.id, updatedData);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
@@ -76,6 +76,7 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
     int maxLines = 1,
     TextInputType? keyboardType,
   }) {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
@@ -84,9 +85,9 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: const Color(0xFFF2F4F7),
+        fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
       ),
@@ -95,12 +96,14 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Update Product'),
         backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
+        foregroundColor: theme.textTheme.titleLarge?.color,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -108,13 +111,13 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(28),
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: theme.shadowColor.withOpacity(0.2),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -144,12 +147,12 @@ class _UpdateProductScreenState extends ConsumerState<UpdateProductScreen> {
                 const SizedBox(height: 30),
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: isLoading ? null : updateProduct,
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     child: isLoading

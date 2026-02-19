@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tutam_fit/constants/app_colors.dart';
 import 'package:tutam_fit/providers/auth_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -14,7 +13,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _phoneController = TextEditingController();
   final _cityController = TextEditingController();
-  // String _role = 'user';
   bool _loading = false;
 
   @override
@@ -24,7 +22,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (user != null) {
       _phoneController.text = user.phone;
       _cityController.text = user.city;
-      // _role = user.role;
     }
   }
 
@@ -47,7 +44,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SnackBar(content: Text('Profile updated successfully')),
       );
 
-      context.pop(); // Go back to Account screen
+      context.pop();
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -58,80 +55,88 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   @override
-  void dispose() {
-    _phoneController.dispose();
-    _cityController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider);
+    final theme = Theme.of(context);
 
     if (user == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile'),
-          backgroundColor: AppColors.deepNavy,
-        ),
-        body: const Center(
-          child: Text('You must be logged in to view this screen.'),
-        ),
+      return const Scaffold(
+        body: Center(child: Text('You must be logged in to view this screen.')),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: AppColors.deepNavy,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: const Text('Profile')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            _buildReadOnlyField('Name', user.name),
-            _buildReadOnlyField('Email', user.email),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(labelText: 'Phone'),
-            ),
-            TextField(
-              controller: _cityController,
-              decoration: const InputDecoration(labelText: 'City'),
-            ),
-            // const SizedBox(height: 8),
-            // DropdownButtonFormField<String>(
-            //   initialValue: _role,
-            //   items: const [
-            //     DropdownMenuItem(value: 'user', child: Text('User')),
-            //     DropdownMenuItem(value: 'admin', child: Text('Admin')),
-            //   ],
-            //   onChanged: (value) {
-            //     if (value != null) _role = value;
-            //   },
-            //   decoration: const InputDecoration(labelText: 'Role'),
-            // ),
-            const SizedBox(height: 16),
-            _loading
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: _saveProfile,
-                    child: const Text('Save Profile'),
+            const SizedBox(height: 20),
+
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.shadowColor.withOpacity(0.1),
+                    blurRadius: 20,
                   ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _readOnlyField("Name", user.name),
+                  _readOnlyField("Email", user.email),
+                  const SizedBox(height: 16),
+
+                  _editableField(_phoneController, "Phone"),
+                  _editableField(_cityController, "City"),
+
+                  const SizedBox(height: 24),
+
+                  _loading
+                      ? const CircularProgressIndicator()
+                      : SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _saveProfile,
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: const Text("Save Changes"),
+                          ),
+                        ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReadOnlyField(String label, String value) {
+  Widget _readOnlyField(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 16),
       child: TextField(
-        decoration: InputDecoration(labelText: label),
         controller: TextEditingController(text: value),
         readOnly: true,
+        decoration: InputDecoration(labelText: label, filled: true),
+      ),
+    );
+  }
+
+  Widget _editableField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(labelText: label, filled: true),
       ),
     );
   }

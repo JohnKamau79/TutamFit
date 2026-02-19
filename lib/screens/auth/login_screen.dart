@@ -15,15 +15,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _loading = false;
 
-  // EMAIL/PASSWORD LOGIN
   void _loginEmail() async {
     setState(() => _loading = true);
     try {
       await ref
           .read(authStateProvider.notifier)
-          .loginEmail(_emailController.text.trim(), _passwordController.text);
-
-      context.go('/main'); // Go to Home after login
+          .loginEmail(_emailController.text.trim(), _passwordController.text, context);
+      context.go('/main');
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -33,19 +31,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  // GOOGLE LOGIN
   void _loginGoogle() async {
     setState(() => _loading = true);
     try {
-      await ref.read(authStateProvider.notifier).loginGoogle();
+      await ref.read(authStateProvider.notifier).loginGoogle(context);
       final user = ref.read(authStateProvider);
 
-      // Check if profile is complete
       if (user != null &&
           (user.phone.isEmpty || user.city.isEmpty || user.role!.isEmpty)) {
-        context.push('/complete-profile'); // Redirect to complete profile
+        context.push('/complete-profile');
       } else {
-        context.go('/main'); // Go to Home if profile complete
+        context.go('/main');
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -57,49 +53,105 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            _loading
-                ? const CircularProgressIndicator()
-                : Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: _loginEmail,
-                        child: const Text('Login'),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              Text(
+                "Welcome Back",
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.shadowColor.withOpacity(0.1),
+                      blurRadius: 20,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        labelText: "Email",
+                        filled: true,
                       ),
-                      ElevatedButton(
-                        onPressed: _loginGoogle,
-                        child: const Text('Login with Google'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: "Password",
+                        filled: true,
                       ),
-                      TextButton(
-                        onPressed: () => context.push('/register'),
-                        child: const Text('Don’t have an account? Register'),
-                      ),
-                    ],
-                  ),
-          ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    _loading
+                        ? const CircularProgressIndicator()
+                        : Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _loginEmail,
+                                  style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: const Text("Login"),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: _loginGoogle,
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                  child: const Text("Login with Google"),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              TextButton(
+                                onPressed: () => context.push('/register'),
+                                child: const Text(
+                                  "Don’t have an account? Register",
+                                ),
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
